@@ -1,0 +1,3444 @@
+/* ==================================================
+   GLOBAL
+   ================================================== */
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: rgb(227, 196, 177);
+  color: #b54cc5;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+
+/* ==================================================
+   APP LAYOUT
+   ================================================== */
+
+.app-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  min-width: 0;
+}
+
+
+/* ==================================================
+   SIDEBAR
+   ================================================== */
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+
+  background-color: #3c2c28;
+  color: #9d7a7a;
+
+  padding: 20px;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.sidebar-title {
+  text-align: center;
+  margin-bottom: 40px;
+  color: rgba(159, 183, 200, 0.985);
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-menu a {
+  display: block;
+
+  padding: 12px;
+  margin: 5px 0;
+
+  color: rgb(175, 223, 238);
+  text-decoration: none;
+
+  border-radius: 5px;
+}
+
+.sidebar-menu a:hover {
+  background-color: #343a40;
+}
+
+
+/* ==================================================
+   MAIN CONTENT
+   ================================================== */
+
+.main-content {
+  margin-left: 250px;
+  padding: 35px;
+
+  width: calc(100% - 250px);
+
+  min-width: 0;
+  min-height: 100vh;
+
+  overflow-x: hidden;
+}
+
+
+/* ==================================================
+   DASHBOARD
+   ================================================== */
+
+.dashboard h1 {
+  margin-top: 0;
+  margin-bottom: 30px;
+}
+
+.dashboard-cards {
+  display: flex;
+  gap: 20px;
+}
+
+.card {
+  background-color: rgb(28, 23, 23);
+
+  padding: 25px;
+
+  border-radius: 10px;
+
+  width: 220px;
+
+  box-shadow: 0 2px 8px rgba(211, 26, 205, 0.505);
+}
+
+.card h3 {
+  margin-top: 0;
+}
+
+.card p {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+
+/* ==================================================
+   STUDENTS PAGE
+   ================================================== */
+
+.students-page {
+  width: 100%;
+}
+
+
+/* ==================================================
+   STUDENTS HEADER
+   ================================================== */
+
+.students-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.students-header h1 {
+  margin: 0 0 5px 0;
+  font-size: 32px;
+}
+
+.students-header p {
+  margin: 0;
+  color: #6c757d;
+}
+
+
+/* ==================================================
+   STUDENT HEADER BUTTONS
+   ================================================== */
+
+.student-header-buttons {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  align-items: stretch;
+}
+
+
+/* ==================================================
+   ADD STUDENT BUTTON
+   ================================================== */
+
+.add-student-btn {
+  background-color: #198754;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 18px;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  font-size: 15px;
+}
+
+.add-student-btn:hover {
+  background-color: #157347;
+}
+
+
+/* ==================================================
+   DELETE STUDENT HEADER BUTTON
+   ================================================== */
+
+.delete-student-header-btn {
+  background-color: #dc3545;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 18px;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  font-size: 15px;
+}
+
+.delete-student-header-btn:hover {
+  background-color: #bb2d3b;
+}
+
+
+/* ==================================================
+   STUDENT VIEW TABS
+   Active Students / Left Students
+   ================================================== */
+
+.student-view-toggle {
+
+  display: flex;
+
+  gap: 6px;
+
+  margin-bottom: 10px;
+
+}
+
+
+/* ==================================================
+   INDIVIDUAL TAB
+   ================================================== */
+
+.student-view-btn {
+
+  border: none;
+
+  padding: 10px 18px;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  font-size: 15px;
+
+  font-weight: 500;
+
+  color: white;
+
+  background-color: #726c7d;
+
+  transition: background-color 0.2s ease;
+
+}
+
+
+/* ==================================================
+   TAB HOVER
+   ================================================== */
+
+.student-view-btn:hover {
+
+  background-color: #5c636a;
+
+}
+
+
+/* ==================================================
+   ACTIVE TAB
+   ================================================== */
+
+.student-view-btn.active {
+
+  background-color: #8c36cf;
+
+  font-weight: 600;
+
+}
+
+
+/* ==================================================
+   ACTIVE TAB HOVER
+   ================================================== */
+
+.student-view-btn.active:hover {
+
+  background-color: #8c23af;
+
+}
+
+
+/* ==================================================
+   STUDENT SEARCH
+   ================================================== */
+
+.student-search {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.student-search input {
+  width: 450px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #ced4da;
+
+  border-radius: 6px;
+
+  font-size: 14px;
+}
+
+.student-search input:focus {
+  outline: none;
+  border-color: #86b7fe;
+}
+
+
+/* ==================================================
+   STUDENTS TABLE
+   ================================================== */
+
+.student-table-container {
+  background-color: rgb(222, 228, 230);
+
+  border-radius: 10px;
+
+  overflow-x: auto;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  -webkit-overflow-scrolling: touch;
+}
+
+.student-table {
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+.student-table th {
+  background-color: #eaebee;
+
+  padding: 14px 16px;
+
+  text-align: left;
+
+  font-size: 14px;
+
+  color: #495057;
+
+  border-bottom: 1px solid #dee2e6;
+
+  white-space: nowrap;
+}
+
+.student-table td {
+  padding: 14px 16px;
+
+  border-bottom: 1px solid #eeeeee;
+
+  font-size: 14px;
+
+  white-space: nowrap;
+}
+
+.student-table tbody tr:hover {
+  background-color: #a4dadf;
+}
+
+
+/* ==================================================
+   VIEW BUTTON
+   ================================================== */
+
+.view-btn {
+  background-color: #3775d1;
+
+  color: white;
+
+  border: none;
+
+  padding: 6px 12px;
+
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+}
+
+.view-btn:hover {
+  background-color: #0b5ed7;
+}
+
+
+/* ==================================================
+   EDIT BUTTON
+   ================================================== */
+
+.edit-btn {
+  background-color: #f0ad4e;
+
+  color: white;
+
+  border: none;
+
+  padding: 6px 12px;
+
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+
+  margin-left: 5px;
+}
+
+.edit-btn:hover {
+  background-color: #ec971f;
+}
+
+
+/* ==================================================
+   LEFT BUTTON
+   ================================================== */
+
+.left-btn {
+  background-color: #0b90f5;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 5px;
+  font-size: 13px;
+}
+
+.left-btn:hover {
+  background-color: hsla(217, 95%, 44%, 0.949);
+}
+
+/* ==================================================
+   COMMON MODAL OVERLAY
+   ================================================== */
+
+.modal-overlay {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+}
+
+
+/* ==================================================
+   STUDENT DETAILS POPUP
+   ================================================== */
+
+.student-details {
+  background-color: rgb(122, 166, 205);
+
+  width: 700px;
+
+  max-width: 90vw;
+
+  max-height: 85vh;
+
+  overflow-y: auto;
+
+  padding: 25px;
+
+  border-radius: 10px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+
+/* Student Details Header */
+
+.student-details-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.student-details-header h2 {
+  margin: 0;
+
+  font-size: 28px;
+}
+
+
+/* ==================================================
+   CLOSE BUTTON
+   ================================================== */
+
+.close-btn {
+  border: none;
+
+  background: transparent;
+
+  font-size: 28px;
+
+  cursor: pointer;
+
+  color: #6c757d;
+
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: #212529;
+}
+
+
+/* ==================================================
+   STUDENT DETAILS GRID
+   ================================================== */
+
+.student-details-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 20px;
+}
+
+.student-details-grid div {
+  padding: 15px;
+
+  background-color: #d6dfe7;
+
+  border-radius: 6px;
+}
+
+.student-details-grid strong {
+  display: block;
+
+  font-size: 13px;
+
+  color: #6c757d;
+
+  margin-bottom: 6px;
+}
+
+.student-details-grid p {
+  margin: 0;
+
+  font-size: 15px;
+
+  font-weight: 500;
+
+  word-break: break-word;
+}
+
+
+/* ==================================================
+   ADD STUDENT POPUP
+   ================================================== */
+
+.add-student-form {
+  background-color: rgba(235, 216, 202, 0.997);
+
+  width: 800px;
+
+  max-width: 90vw;
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  padding: 25px;
+
+  border-radius: 10px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+
+/* Add Student Header */
+
+.add-student-form-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.add-student-form-header h2 {
+  margin: 0;
+
+  font-size: 28px;
+}
+
+
+/* ==================================================
+   ADD STUDENT FORM GRID
+   ================================================== */
+
+.student-form-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 20px;
+}
+
+.student-form-grid div {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.student-form-grid label {
+  margin-bottom: 6px;
+
+  font-weight: bold;
+
+  font-size: 14px;
+}
+
+.student-form-grid input {
+  padding: 10px;
+
+  border: 1px solid #cfaeae;
+
+  border-radius: 6px;
+
+  font-size: 14px;
+}
+
+.student-form-grid input::placeholder {
+  color: #adb5bd;
+}
+
+.student-form-grid input:focus {
+  outline: none;
+
+  border-color: #0d6efd;
+}
+
+
+/* ==================================================
+   FORM BUTTONS
+   ================================================== */
+
+.student-form-buttons {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 25px;
+}
+
+.form-error {
+  margin: 5px 0 0 0;
+
+  color: #dc3545;
+
+  font-size: 13px;
+}
+
+
+/* Cancel */
+
+.cancel-btn {
+  padding: 10px 18px;
+
+  border: 1px solid #ced4da;
+
+  background-color: white;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background-color: #f8f9fa;
+}
+
+
+/* Save */
+
+.save-student-btn {
+  padding: 10px 18px;
+
+  border: none;
+
+  background-color: #198754;
+
+  color: white;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+}
+
+.save-student-btn:hover {
+  background-color: #157347;
+}
+
+
+/* ==================================================
+   LEFT STUDENTS - DELETE BUTTON
+   ================================================== */
+
+.left-student-header {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+
+
+.delete-student-header-btn {
+  width: auto;
+  min-width: 180px;
+
+  padding: 10px 16px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #dc3030;
+  color: white;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  box-sizing: border-box;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.delete-student-header-btn:hover {
+  background: #c92525;
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+
+/* ==================================================
+   DELETE BUTTON
+   ================================================== */
+
+.delete-btn {
+  background-color: #dc3545;
+
+  color: white;
+
+  border: none;
+
+  padding: 6px 12px;
+
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+
+  margin-left: 5px;
+}
+
+.delete-btn:hover {
+  background-color: #bb2d3b;
+}
+
+
+/* ==================================================
+   DELETE STUDENT SELECTION POPUP
+   ================================================== */
+
+.delete-student-selection {
+  background-color: white;
+
+  width: 500px;
+
+  max-width: 90vw;
+
+  padding: 25px;
+
+  border-radius: 10px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+
+/* Header */
+
+.delete-student-selection-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.delete-student-selection-header h2 {
+  margin: 0;
+
+  font-size: 26px;
+
+  color: #212529;
+}
+
+
+/* Select section */
+
+.delete-student-selection-body {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.delete-student-selection-body label {
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #495057;
+}
+
+.delete-student-selection-body select {
+  width: 100%;
+
+  padding: 11px 12px;
+
+  border: 1px solid #ced4da;
+
+  border-radius: 6px;
+
+  background-color: white;
+
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.delete-student-selection-body select:focus {
+  outline: none;
+
+  border-color: #86b7fe;
+
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.1);
+}
+
+
+/* Disabled Continue */
+
+.delete-student-selection .confirm-delete-btn:disabled {
+  background-color: #adb5bd;
+
+  cursor: not-allowed;
+
+  opacity: 0.7;
+}
+
+
+/* ==================================================
+   DELETE CONFIRMATION POPUP
+   ================================================== */
+
+.delete-confirmation {
+  background-color: white;
+
+  width: 450px;
+
+  max-width: 90vw;
+
+  padding: 30px;
+
+  border-radius: 10px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+
+  text-align: center;
+}
+
+.delete-confirmation h2 {
+  margin: 0 0 15px 0;
+
+  font-size: 26px;
+
+  color: #212529;
+}
+
+.delete-confirmation p {
+  margin: 10px 0;
+
+  font-size: 15px;
+
+  color: #6c757d;
+}
+
+.delete-confirmation p strong {
+  color: #212529;
+}
+
+.delete-confirmation-buttons {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  margin-top: 25px;
+}
+
+.confirm-delete-btn {
+  padding: 10px 20px;
+
+  border: none;
+
+  background-color: #dc3545;
+
+  color: white;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+}
+
+.confirm-delete-btn:hover {
+  background-color: #bb2d3b;
+}
+
+
+/* ==================================================
+   DELETE SUCCESS POPUP
+   ================================================== */
+
+.delete-success {
+  background-color: rgba(255, 255, 255, 0.8);
+
+  width: 450px;
+
+  max-width: 90vw;
+
+  padding: 30px;
+
+  border-radius: 10px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+
+  text-align: center;
+}
+
+.delete-success h2 {
+  margin: 0 0 15px 0;
+
+  font-size: 24px;
+
+  color: #198754;
+}
+
+.delete-success p {
+  margin: 10px 0 25px 0;
+
+  font-size: 15px;
+
+  color: #6c757d;
+}
+
+.delete-success p strong {
+  color: #212529;
+}
+
+.success-ok-btn {
+  padding: 10px 25px;
+
+  border: none;
+
+  background-color: #198754;
+
+  color: white;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+}
+
+.success-ok-btn:hover {
+  background-color: #157347;
+}
+
+
+/* ==================================================
+   ROOMS PAGE
+   ================================================== */
+
+.rooms-page {
+  width: 100%;
+
+  min-height: 100vh;
+
+  background-color: #d3dce2;
+}
+
+
+/* ==================================================
+   ROOMS HEADER
+   ================================================== */
+
+.rooms-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.rooms-header h1 {
+  margin: 0 0 5px 0;
+
+  font-size: 32px;
+}
+
+.rooms-header p {
+  margin: 0;
+
+  color: #6c757d;
+}
+
+
+/* ==================================================
+   ROOM HEADER BUTTONS
+   ================================================== */
+
+.room-header-buttons {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  align-items: stretch;
+}
+
+.add-room-btn,
+.delete-room-main-btn {
+  min-width: 150px;
+
+  padding: 10px 18px;
+
+  border-radius: 6px;
+
+  font-size: 15px;
+
+  cursor: pointer;
+}
+
+
+/* Add Room */
+
+.add-room-btn {
+  background-color: #198754;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 18px;
+
+  border-radius: 6px;
+
+  font-size: 15px;
+
+  cursor: pointer;
+}
+
+.add-room-btn:hover {
+  background-color: #157347;
+}
+
+
+/* Delete Room */
+
+.delete-room-main-btn {
+  background-color: #dc3545;
+
+  color: white;
+
+  border: none;
+}
+
+.delete-room-main-btn:hover {
+  background-color: #bb2d3b;
+}
+
+
+/* ==================================================
+   ROOM SEARCH
+   ================================================== */
+
+.room-search {
+  margin-bottom: 20px;
+}
+
+.room-search input {
+  width: 350px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #ced4da;
+
+  border-radius: 6px;
+
+  font-size: 14px;
+}
+
+.room-search input::placeholder {
+  color: #adb5bd;
+}
+
+.room-search input:focus {
+  outline: none;
+
+  border-color: #86b7fe;
+}
+
+
+/* ==================================================
+   ROOM TABLE
+   ================================================== */
+
+.room-table-container {
+  width: 100%;
+
+  max-width: 100%;
+
+  background-color: rgb(216, 227, 228);
+
+  border-radius: 10px;
+
+  overflow-x: auto;
+
+  overflow-y: hidden;
+
+  -webkit-overflow-scrolling: touch;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Actual table */
+
+.room-table {
+  width: 100%;
+
+  min-width: 650px;
+
+  border-collapse: collapse;
+
+  table-layout: fixed;
+}
+
+
+/* Header */
+
+.room-table th {
+  background-color: #d8e3e4;
+
+  padding: 12px 12px;
+
+  text-align: left;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  color: #212529;
+
+  border-bottom: 1px solid #dee2e6;
+
+  white-space: nowrap;
+}
+
+
+/* Data */
+
+.room-table td {
+  padding: 12px 12px;
+
+  border-bottom: 1px solid #eeeeee;
+
+  font-size: 14px;
+
+  color: #212529;
+
+  white-space: nowrap;
+}
+
+
+/* Hover */
+
+.room-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+
+/* ==================================================
+   ROOM TABLE COLUMN WIDTHS
+   ================================================== */
+
+.room-table th:nth-child(1),
+.room-table td:nth-child(1) {
+  width: 100px;
+}
+
+.room-table th:nth-child(2),
+.room-table td:nth-child(2) {
+  width: 130px;
+}
+
+.room-table th:nth-child(3),
+.room-table td:nth-child(3) {
+  width: 150px;
+}
+
+.room-table th:nth-child(4),
+.room-table td:nth-child(4) {
+  width: 130px;
+}
+
+.room-table th:nth-child(5),
+.room-table td:nth-child(5) {
+  width: 140px;
+}
+
+.room-table th:nth-child(6),
+.room-table td:nth-child(6) {
+  width: 150px;
+}
+
+
+/* ==================================================
+   ROOM ACTION
+   ================================================== */
+
+.room-action-cell {
+  white-space: nowrap;
+
+  overflow: visible;
+}
+
+.room-action-cell .view-btn,
+.room-action-cell .edit-btn {
+  display: inline-block;
+
+  white-space: nowrap;
+}
+
+
+/* ==================================================
+   DELETE ROOM POPUP
+   ================================================== */
+
+.room-delete-modal {
+  width: 450px;
+
+  max-width: 95vw;
+
+  background-color: white;
+
+  padding: 25px;
+
+  border-radius: 10px;
+
+  box-sizing: border-box;
+}
+
+
+/* Select area */
+
+.delete-room-select {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  margin-top: 20px;
+
+  text-align: left;
+}
+
+.delete-room-select label {
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #495057;
+}
+
+.delete-room-select select {
+  width: 100%;
+
+  padding: 11px 12px;
+
+  border: 1px solid #ced4da;
+
+  border-radius: 6px;
+
+  background-color: white;
+
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.delete-room-select select:focus {
+  outline: none;
+
+  border-color: #86b7fe;
+
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.1);
+}
+
+
+/* ==================================================
+   ROOM DETAILS POPUP
+   ================================================== */
+
+.room-details {
+  position: fixed;
+
+  top: 50%;
+
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  background-color: white;
+
+  width: 700px;
+
+  max-width: 90vw;
+
+  max-height: 85vh;
+
+  overflow-y: auto;
+
+  padding: 25px;
+
+  border-radius: 10px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+
+  z-index: 1000;
+}
+
+
+/* Room Details Header */
+
+.room-details-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.room-details-header h2 {
+  margin: 0;
+
+  font-size: 28px;
+}
+
+
+/* Room Details Grid */
+
+.room-details-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 20px;
+}
+
+.room-details-grid div {
+  padding: 15px;
+
+  background-color: #f8f9fa;
+
+  border-radius: 6px;
+}
+
+.room-details-grid strong {
+  display: block;
+
+  font-size: 13px;
+
+  color: #6c757d;
+
+  margin-bottom: 6px;
+}
+
+.room-details-grid p {
+  margin: 0;
+
+  font-size: 15px;
+
+  font-weight: 500;
+
+  word-break: break-word;
+}
+
+.room-number {
+  margin: 5px 0 0 0;
+
+  font-size: 22px;
+
+  font-weight: 600;
+}
+
+
+/* ==================================================
+   ROOM MESSAGES
+   ================================================== */
+
+.room-error {
+  margin: 15px 0;
+
+  padding: 14px 18px;
+
+  background: #fee2e2;
+
+  color: #b91c1c;
+
+  border: 1px solid #fecaca;
+
+  border-radius: 8px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  text-align: center;
+}
+
+.room-success {
+  margin: 15px 0;
+
+  padding: 14px 18px;
+
+  background: #dcfce7;
+
+  color: #15803d;
+
+  border: 1px solid #bbf7d0;
+
+  border-radius: 8px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+/* ==================================================
+   MONTHLY RENT PAGE
+   ================================================== */
+
+.monthly-rent-page {
+  width: 100%;
+}
+
+
+/* ==================================================
+   MONTHLY RENT HEADER
+   ================================================== */
+
+.monthly-rent-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.monthly-rent-header h1 {
+  margin: 0 0 5px 0;
+
+  font-size: 32px;
+}
+
+.monthly-rent-header p {
+  margin: 0;
+
+  color: #6c757d;
+}
+
+
+/* ==================================================
+   MONTHLY RENT SEARCH
+   ================================================== */
+
+.monthly-rent-search {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 20px;
+
+  flex-wrap: wrap;
+}
+
+.monthly-rent-search select {
+  padding: 10px 12px;
+
+  border: 1px solid #ced4da;
+
+  border-radius: 6px;
+
+  background-color: white;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  min-width: 150px;
+}
+
+.monthly-rent-search select:focus {
+  outline: none;
+
+  border-color: #86b7fe;
+}
+
+.monthly-rent-search button {
+  padding: 10px 20px;
+
+  border: none;
+
+  border-radius: 6px;
+
+  background-color: #212529;
+
+  color: white;
+
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.monthly-rent-search button:hover {
+  background-color: #343a40;
+}
+
+
+/* ==================================================
+   MONTHLY RENT TABLE
+   ================================================== */
+
+.monthly-rent-table-container {
+  width: 100%;
+
+  background: white;
+
+  border-radius: 10px;
+
+  overflow-x: auto;
+
+  overflow-y: hidden;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  -webkit-overflow-scrolling: touch;
+}
+
+
+/* ==================================================
+   MONTHLY RENT TABLE
+   ================================================== */
+
+.monthly-rent-table {
+  width: 100%;
+
+  min-width: 900px;
+
+  border-collapse: collapse;
+
+  table-layout: auto;
+}
+
+
+/* ==================================================
+   MONTHLY RENT TABLE HEADER + DATA
+   ================================================== */
+
+.monthly-rent-table th,
+.monthly-rent-table td {
+
+  padding: 12px 10px;
+
+  font-size: 13px;
+
+  text-align: left;
+
+  white-space: nowrap;
+
+  overflow: visible;
+
+  text-overflow: clip;
+}
+
+
+/* ==================================================
+   HEADER
+   ================================================== */
+
+.monthly-rent-table th {
+
+  font-weight: 600;
+
+  color: #222;
+
+  border-bottom: 1px solid #e5e5e5;
+
+  background-color: #ffffff;
+
+  white-space: nowrap;
+}
+
+
+/* ==================================================
+   DATA
+   ================================================== */
+
+.monthly-rent-table td {
+
+  color: #333;
+
+  border-bottom: 1px solid #eeeeee;
+
+  white-space: nowrap;
+}
+
+
+/* ==================================================
+   HOVER
+   ================================================== */
+
+.monthly-rent-table tbody tr:hover {
+
+  background-color: #f8f9fa;
+}
+
+
+/* ==================================================
+   MONTHLY RENT ACTION BUTTONS
+   ================================================== */
+
+.monthly-rent-table td:last-child {
+
+  white-space: nowrap;
+
+  overflow: visible;
+}
+
+
+.monthly-rent-table .view-btn,
+.monthly-rent-table .edit-btn {
+
+  display: inline-block;
+
+  white-space: nowrap;
+}
+
+
+/* ==================================================
+   PREVENT HEADER TEXT FROM BEING CUT
+   ================================================== */
+
+.monthly-rent-table th:nth-child(1) {
+  min-width: 90px;
+}
+
+.monthly-rent-table th:nth-child(2) {
+  min-width: 125px;
+}
+
+.monthly-rent-table th:nth-child(3) {
+  min-width: 90px;
+}
+
+.monthly-rent-table th:nth-child(4) {
+  min-width: 105px;
+}
+
+.monthly-rent-table th:nth-child(5) {
+  min-width: 105px;
+}
+
+.monthly-rent-table th:nth-child(6) {
+  min-width: 105px;
+}
+
+.monthly-rent-table th:nth-child(7) {
+  min-width: 135px;
+}
+
+.monthly-rent-table th:nth-child(8) {
+  min-width: 125px;
+}
+
+.monthly-rent-table th:nth-child(9) {
+  min-width: 130px;
+}
+
+
+/* ==================================================
+   MONTHLY RENT ACTION BUTTONS
+   ================================================== */
+
+.monthly-rent-table td:nth-child(9) {
+  white-space: nowrap;
+
+  overflow: visible;
+}
+
+.monthly-rent-table .view-btn,
+.monthly-rent-table .edit-btn {
+  display: inline-block;
+
+  white-space: nowrap;
+
+  margin: 2px;
+}
+
+
+/* ==================================================
+   MONTHLY RENT ERROR
+   ================================================== */
+
+.monthly-rent-error {
+  margin: 15px 0;
+
+  padding: 14px 18px;
+
+  background: #fee2e2;
+
+  color: #b91c1c;
+
+  border: 1px solid #fecaca;
+
+  border-radius: 8px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+/* ==================================================
+   CREATE MONTHLY RENT
+   ================================================== */
+
+.monthly-rent-create-section {
+  margin-bottom: 25px;
+}
+
+.create-rent-btn {
+  background: #2563eb;
+
+  color: white;
+
+  border: none;
+
+  padding: 11px 20px;
+
+  border-radius: 8px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
+}
+
+.create-rent-btn:hover {
+  background: #1d4ed8;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.3);
+}
+
+
+/* ==================================================
+   MONTHLY RENT SUCCESS
+   ================================================== */
+
+.monthly-rent-success {
+  margin: 15px 0;
+
+  padding: 14px 18px;
+
+  background: #dcfce7;
+
+  color: #15803d;
+
+  border: 1px solid #bbf7d0;
+
+  border-radius: 8px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+/* ==================================================
+   MONTHLY RENT MESSAGE POPUP
+   ================================================== */
+
+.mrd-message-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.6);
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  z-index: 100000;
+}
+
+.mrd-message-overlay .delete-confirmation p {
+  color: #b91c1c;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  line-height: 1.5;
+}
+
+.mrd-message-overlay .delete-confirmation h2 {
+  color: #000000;
+
+  font-weight: 700;
+}
+
+
+/* ==================================================
+   MONTHLY RENT POPUP OVERLAY
+   ================================================== */
+
+.monthly-rent-modal-overlay {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.55);
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  z-index: 2000;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  overflow-y: auto;
+}
+
+
+/* ==================================================
+   MONTHLY RENT MODAL
+   ================================================== */
+
+.monthly-rent-modal {
+  position: relative;
+
+  background-color: #ffffff;
+
+  width: 650px;
+
+  max-width: 95vw;
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  padding: 25px;
+
+  border-radius: 12px;
+
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+
+  animation: monthlyRentPopup 0.2s ease-out;
+}
+
+
+/* ==================================================
+   POPUP ANIMATION
+   ================================================== */
+
+@keyframes monthlyRentPopup {
+
+  from {
+    opacity: 0;
+
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: scale(1);
+  }
+
+}
+
+
+/* ==================================================
+   MONTHLY RENT MODAL HEADER
+   ================================================== */
+
+.monthly-rent-modal-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding-bottom: 15px;
+
+  margin-bottom: 20px;
+
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.monthly-rent-modal-header h2 {
+  margin: 0;
+
+  font-size: 25px;
+
+  color: #212529;
+}
+
+
+/* ==================================================
+   MONTHLY RENT VIEW DETAILS
+   ================================================== */
+
+.monthly-rent-details-grid {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+}
+
+.monthly-rent-details-grid > div {
+  padding: 10px 5px;
+
+  background-color: transparent;
+}
+
+.monthly-rent-details-grid label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  color: #6c757d;
+}
+
+.monthly-rent-details-grid p {
+  margin: 0;
+
+  font-size: 16px;
+
+  font-weight: 500;
+
+  color: #212529;
+}
+
+
+/* ==================================================
+   MONTHLY RENT STUDENTS SECTION
+   ================================================== */
+
+.monthly-rent-students {
+  padding: 15px !important;
+
+  background-color: #f8f9fa !important;
+
+  border-radius: 8px;
+
+  border: 1px solid #eeeeee;
+}
+
+.monthly-rent-students label {
+  margin-bottom: 10px;
+}
+
+.monthly-rent-students ul {
+  margin: 0;
+
+  padding-left: 22px;
+}
+
+.monthly-rent-students li {
+  margin-bottom: 7px;
+
+  font-size: 15px;
+
+  color: #212529;
+}
+
+.monthly-rent-students li:last-child {
+  margin-bottom: 0;
+}
+
+
+/* ==================================================
+   PAYMENT STATUS SECTION
+   ================================================== */
+
+.monthly-rent-details-grid > div:nth-child(3) {
+  margin-top: 5px;
+
+  padding-top: 15px;
+
+  border-top: 1px solid #e5e5e5;
+}
+
+
+/* ==================================================
+   RENT DETAILS SECTION
+   ================================================== */
+
+.monthly-rent-details-grid > div:nth-child(4) {
+  margin-top: 5px;
+
+  padding-top: 15px;
+
+  border-top: 1px solid #e5e5e5;
+}
+
+
+/* ==================================================
+   EDIT PAYMENT STATUS
+   ================================================== */
+
+.monthly-rent-edit-info {
+  background-color: #f8f9fa;
+
+  border-radius: 8px;
+
+  padding: 15px;
+
+  margin-bottom: 20px;
+
+  border: 1px solid #eeeeee;
+}
+
+.monthly-rent-edit-info p {
+  margin: 7px 0;
+
+  font-size: 15px;
+
+  color: #333;
+}
+
+.monthly-rent-edit-info p:first-child {
+  margin-top: 0;
+}
+
+.monthly-rent-edit-info p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* ==================================================
+   PAYMENT STATUS FIELD
+   ================================================== */
+
+.monthly-rent-status-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  margin-bottom: 25px;
+}
+
+.monthly-rent-status-field label {
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #495057;
+}
+
+.monthly-rent-status-field select {
+  width: 100%;
+
+  padding: 10px 12px;
+
+  border: 1px solid #ced4da;
+
+  border-radius: 6px;
+
+  background-color: white;
+
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.monthly-rent-status-field select:focus {
+  outline: none;
+
+  border-color: #86b7fe;
+
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.1);
+}
+
+
+/* ==================================================
+   MODAL BUTTONS
+   ================================================== */
+
+.monthly-rent-modal-buttons {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 25px;
+
+  padding-top: 15px;
+
+  border-top: 1px solid #e5e5e5;
+}
+
+
+/* ==================================================
+   PAYMENT STATUS BADGES
+   ================================================== */
+
+.payment-paid {
+  color: #198754;
+
+  font-weight: 700;
+}
+
+.payment-partial {
+  color: #d97706;
+
+  font-weight: 700;
+}
+
+.payment-pending {
+  color: #dc3545;
+
+  font-weight: 700;
+}
+
+
+/* ==================================================
+   MONTHLY RENT TAB CONTENT
+   ================================================== */
+
+.monthly-rent-tab-content {
+  padding: 25px;
+}
+
+.monthly-rent-tab-content h3 {
+  margin: 0 0 20px 0;
+
+  font-size: 20px;
+
+  color: #212529;
+}
+
+
+/* ==================================================
+   OVERVIEW - 2 COLUMN GRID
+   ================================================== */
+
+.monthly-rent-overview-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 18px;
+}
+
+.monthly-rent-overview-card {
+  padding: 20px;
+
+  background-color: #f8f9fa;
+
+  border: 1px solid #e5e5e5;
+
+  border-radius: 10px;
+}
+
+.monthly-rent-overview-card label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #6c757d;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.monthly-rent-overview-card p {
+  margin: 0;
+
+  color: #212529;
+
+  font-size: 21px;
+
+  font-weight: 700;
+}
+
+
+/* ==================================================
+   STUDENTS - 2 STUDENTS SIDE BY SIDE
+   ================================================== */
+
+.monthly-rent-student-list {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 15px;
+}
+
+.monthly-rent-student-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 15px;
+
+  background-color: #f8f9fa;
+
+  border: 1px solid #e5e5e5;
+
+  border-radius: 10px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+}
+
+.student-number {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  min-width: 30px;
+
+  height: 30px;
+
+  border-radius: 50%;
+
+  background-color: #0d6efd;
+
+  color: white;
+
+  font-size: 12px;
+
+  font-weight: bold;
+}
+
+.no-students {
+  color: #6c757d;
+
+  text-align: center;
+
+  padding: 20px;
+}
+
+
+/* ==================================================
+   RENT DETAILS - 2 COLUMN GRID
+   ================================================== */
+
+.monthly-rent-info-list {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 15px;
+}
+
+.monthly-rent-info-row {
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  padding: 18px;
+
+  background-color: #f8f9fa;
+
+  border: 1px solid #e5e5e5;
+
+  border-radius: 10px;
+
+  min-height: 85px;
+}
+
+.monthly-rent-info-row label {
+  margin-bottom: 8px;
+
+  color: #6c757d;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.monthly-rent-info-row p {
+  margin: 0;
+
+  color: #212529;
+
+  font-size: 19px;
+
+  font-weight: 700;
+}
+
+
+/* ==================================================
+   STUDENT NAME LIST
+   ================================================== */
+
+.student-name-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.student-name-btn {
+  border: none;
+
+  background: transparent;
+
+  padding: 8px 10px;
+
+  text-align: left;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  color: #0d6efd;
+
+  cursor: pointer;
+
+  border-radius: 5px;
+}
+
+.student-name-btn:hover {
+  background-color: #e9f2ff;
+
+  text-decoration: underline;
+}
+
+
+/* ==================================================
+   RESPONSIVE - TABLET
+   ================================================== */
+
+@media (max-width: 900px) {
+
+  .student-details-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE - SMALL SCREEN
+   ================================================== */
+
+@media (max-width: 700px) {
+
+  .sidebar {
+    width: 200px;
+  }
+
+  .main-content {
+    margin-left: 200px;
+
+    padding: 20px;
+  }
+
+  .student-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .students-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+  .student-header-buttons {
+    width: 100%;
+  }
+
+  .student-header-buttons .add-student-btn,
+  .student-header-buttons .delete-student-header-btn {
+    width: 100%;
+  }
+
+  .student-search input {
+    width: 100%;
+  }
+
+  .monthly-rent-modal {
+    width: 95vw;
+
+    max-height: 90vh;
+
+    padding: 20px;
+  }
+
+  .monthly-rent-search {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+  .monthly-rent-search select,
+  .monthly-rent-search button {
+    width: 100%;
+  }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE - VERY SMALL SCREEN
+   ================================================== */
+
+@media (max-width: 500px) {
+
+  .sidebar {
+    width: 160px;
+  }
+
+  .main-content {
+    margin-left: 160px;
+
+    padding: 15px;
+  }
+
+  .sidebar-title {
+    font-size: 24px;
+  }
+
+  .student-table {
+    font-size: 12px;
+  }
+
+  .student-table th,
+  .student-table td {
+    padding: 8px;
+  }
+
+  .monthly-rent-modal-overlay {
+    padding: 10px;
+  }
+
+  .monthly-rent-modal {
+    width: 100%;
+
+    max-width: 100%;
+
+    padding: 18px;
+
+    border-radius: 10px;
+  }
+
+  .monthly-rent-modal-header h2 {
+    margin: 0;
+
+    font-size: 28px;
+
+    font-weight: 700;
+  }
+
+  .monthly-rent-details-grid p {
+    font-size: 15px;
+  }
+
+}
+
+
+/* ==================================================
+   MOBILE - MONTHLY RENT TAB CONTENT
+   ================================================== */
+
+@media (max-width: 600px) {
+
+  .monthly-rent-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-rent-student-list {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-rent-info-list {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* ==================================================
+   MOBILE LANDSCAPE
+   IMPORTANT:
+   Keep landscape layout as before.
+   ================================================== */
+
+@media (orientation: landscape) and (max-height: 600px) {
+
+  .sidebar {
+    width: 200px;
+
+    height: 100vh;
+
+    padding: 15px;
+  }
+
+  .sidebar-title {
+    margin-bottom: 20px;
+
+    font-size: 24px;
+  }
+
+  .sidebar-menu a {
+    padding: 8px 10px;
+
+    margin: 3px 0;
+  }
+
+  .main-content {
+    margin-left: 200px;
+
+    width: calc(100% - 200px);
+
+    padding: 20px;
+  }
+
+  .rooms-page,
+  .students-page,
+  .monthly-rent-page {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .modal-overlay,
+  .monthly-rent-modal-overlay {
+    padding: 10px;
+  }
+
+  .student-details,
+  .add-student-form,
+  .room-details,
+  .monthly-rent-modal {
+    max-width: 95vw;
+
+    max-height: 90vh;
+  }
+
+}
+
+
+/* ==================================================
+   PORTRAIT MOBILE
+   ================================================== */
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+
+  /* ================================================
+     APP
+     ================================================ */
+
+  .app-layout {
+    display: block;
+
+    width: 100%;
+
+    min-width: 0;
+  }
+
+
+  /* ================================================
+     SIDEBAR
+     ================================================ */
+
+  .sidebar {
+    position: relative;
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: auto;
+
+    padding: 15px;
+  }
+
+  .sidebar-title {
+    margin-bottom: 20px;
+
+    font-size: 26px;
+  }
+
+  .sidebar-menu {
+    width: 100%;
+  }
+
+  .sidebar-menu a {
+    width: 100%;
+
+    padding: 10px 12px;
+
+    margin: 3px 0;
+  }
+
+
+  /* ================================================
+     MAIN CONTENT
+     ================================================ */
+
+  .main-content {
+    width: 100%;
+
+    margin-left: 0;
+
+    padding: 20px 15px;
+
+    min-width: 0;
+
+    overflow-x: hidden;
+  }
+
+
+  /* ================================================
+     DASHBOARD
+     ================================================ */
+
+  .dashboard {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .dashboard h1 {
+    margin: 0 0 25px 0;
+
+    font-size: 30px;
+
+    white-space: nowrap;
+  }
+
+
+  /* Dashboard cards vertically */
+
+  .dashboard-cards {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+
+    gap: 15px;
+  }
+
+
+  /* Individual dashboard card */
+
+  .dashboard-cards .card {
+    width: 100%;
+
+    min-width: 0;
+
+    max-width: 100%;
+
+    padding: 20px;
+
+    border-radius: 10px;
+  }
+
+  .dashboard-cards .card h3 {
+    margin: 0 0 10px 0;
+
+    font-size: 20px;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+
+    word-break: normal;
+
+    overflow-wrap: normal;
+  }
+
+  .dashboard-cards .card p {
+    margin: 0;
+
+    font-size: 30px;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+  }
+
+
+  /* ================================================
+     STUDENTS PAGE
+     ================================================ */
+
+  .students-page {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .students-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+  .students-header h1 {
+    font-size: 30px;
+  }
+
+  .student-header-buttons {
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    align-items: stretch;
+  }
+
+  .student-header-buttons .add-student-btn,
+  .student-header-buttons .delete-student-header-btn {
+    width: 100%;
+  }
+
+  .student-search {
+    width: 100%;
+  }
+
+  .student-search input {
+    width: 100%;
+  }
+
+
+  /* ================================================
+     ROOMS PAGE
+     ================================================ */
+
+  .rooms-page {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .rooms-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+  .rooms-header h1 {
+    font-size: 30px;
+  }
+
+  .room-search {
+    width: 100%;
+  }
+
+  .room-search input {
+    width: 100%;
+  }
+
+
+  /* ================================================
+     ROOM HEADER BUTTONS
+     ================================================ */
+
+  .room-header-buttons {
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .add-room-btn,
+  .delete-room-main-btn {
+    width: 100%;
+  }
+
+
+  /* ================================================
+     ROOM SUMMARY
+     ================================================ */
+
+  .room-summary {
+    grid-template-columns: 1fr 1fr !important;
+
+    width: 100% !important;
+
+    gap: 10px !important;
+  }
+
+
+  /* ================================================
+     TABLES
+     ================================================ */
+
+  .student-table-container,
+  .room-table-container,
+  .monthly-rent-table-container {
+    width: 100%;
+
+    max-width: 100%;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+
+  /* ================================================
+     STUDENTS TABLE
+     ================================================ */
+
+  .student-table {
+    min-width: 600px;
+  }
+
+
+  /* ================================================
+     ROOMS TABLE
+     ================================================ */
+
+  .room-table-container {
+    width: 100%;
+
+    max-width: 100%;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .room-table {
+    width: 800px;
+
+    min-width: 800px;
+
+    table-layout: fixed;
+  }
+
+
+  /* Room table columns */
+
+  .room-table th:nth-child(1),
+  .room-table td:nth-child(1) {
+    width: 100px;
+  }
+
+  .room-table th:nth-child(2),
+  .room-table td:nth-child(2) {
+    width: 130px;
+  }
+
+  .room-table th:nth-child(3),
+  .room-table td:nth-child(3) {
+    width: 160px;
+  }
+
+  .room-table th:nth-child(4),
+  .room-table td:nth-child(4) {
+    width: 130px;
+  }
+
+  .room-table th:nth-child(5),
+  .room-table td:nth-child(5) {
+    width: 140px;
+  }
+
+  .room-table th:nth-child(6),
+  .room-table td:nth-child(6) {
+    width: 140px;
+  }
+
+
+  /* Room table header */
+
+  .room-table th {
+    white-space: nowrap;
+
+    overflow: visible;
+
+    text-overflow: clip;
+  }
+
+
+  /* Room table data */
+
+  .room-table td {
+    white-space: nowrap;
+
+    overflow: visible;
+
+    text-overflow: clip;
+  }
+
+
+  /* Room action */
+
+  .room-action-cell {
+    white-space: nowrap;
+
+    overflow: visible;
+  }
+
+
+  /* ================================================
+     MONTHLY RENT TABLE
+     ================================================ */
+
+  .monthly-rent-table {
+    width: max-content;
+
+    min-width: 900px;
+  }
+
+  .monthly-rent-table th {
+    white-space: normal;
+
+    overflow: visible;
+
+    text-overflow: clip;
+
+    line-height: 1.35;
+  }
+
+  .monthly-rent-table td {
+    white-space: nowrap;
+
+    overflow: visible;
+
+    text-overflow: clip;
+  }
+
+
+  /* ================================================
+     ADD / EDIT POPUPS
+     ================================================ */
+
+  .modal-overlay {
+    padding: 10px;
+
+    align-items: center;
+
+    overflow-y: auto;
+  }
+
+  .add-student-form {
+    width: 100%;
+
+    max-width: 100%;
+
+    max-height: 90vh;
+
+    padding: 18px;
+  }
+
+  .student-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  /* ================================================
+     VIEW STUDENT POPUP
+     ================================================ */
+
+  .student-details {
+    width: 100%;
+
+    max-width: 100%;
+
+    max-height: 90vh;
+
+    padding: 18px;
+  }
+
+  .student-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  /* ================================================
+     DELETE STUDENT POPUP
+     ================================================ */
+
+  .delete-student-selection {
+    width: 100%;
+
+    max-width: 100%;
+
+    padding: 18px;
+  }
+
+  .delete-student-selection-header h2 {
+    font-size: 24px;
+  }
+
+
+  /* ================================================
+     DELETE CONFIRMATION POPUP
+     ================================================ */
+
+  .delete-confirmation {
+    width: 100%;
+
+    max-width: 100%;
+
+    padding: 20px;
+  }
+
+
+  /* ================================================
+     DELETE SUCCESS POPUP
+     ================================================ */
+
+  .delete-success {
+    width: 100%;
+
+    max-width: 100%;
+
+    padding: 20px;
+  }
+
+
+  /* ================================================
+     ROOM DETAILS POPUP
+     ================================================ */
+
+  .room-details {
+    width: 100%;
+
+    max-width: 100%;
+
+    max-height: 90vh;
+
+    padding: 18px;
+  }
+
+  .room-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  /* ================================================
+     MONTHLY RENT PAGE
+     ================================================ */
+
+  .monthly-rent-page {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .monthly-rent-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+  .monthly-rent-header h1 {
+    font-size: 30px;
+  }
+
+  .monthly-rent-search {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    width: 100%;
+  }
+
+  .monthly-rent-search select,
+  .monthly-rent-search button {
+    width: 100%;
+  }
+
+
+  /* ================================================
+     MONTHLY RENT TABLE - PORTRAIT
+     ================================================ */
+
+  .monthly-rent-table-container {
+    width: 100%;
+
+    max-width: 100%;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .monthly-rent-table {
+    width: max-content;
+
+    min-width: 900px;
+  }
+
+
+  /* ================================================
+     MONTHLY RENT POPUP
+     ================================================ */
+
+  .monthly-rent-modal-overlay {
+    padding: 10px;
+  }
+
+  .monthly-rent-modal {
+    width: 100%;
+
+    max-width: 100%;
+
+    max-height: 90vh;
+
+    padding: 18px;
+  }
+
+}
+
+/* ==================================================
+   CREATE / DELETE MONTHLY RENT SECTION
+   ================================================== */
+
+.monthly-rent-create-section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 25px 0 45px 0;
+}
+
+
+/* ==================================================
+   CREATE MONTHLY RENT BUTTON
+   ================================================== */
+
+.create-rent-btn {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 11px 20px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #2864e6;
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.create-rent-btn:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.20);
+
+}
+
+
+.create-rent-icon {
+
+  font-size: 22px;
+
+  font-weight: 400;
+
+  line-height: 1;
+
+}
+
+
+/* ==================================================
+   DELETE MONTHLY RENT BUTTON
+   ================================================== */
+
+.delete-rent-btn {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 11px 20px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #dc3030;
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.delete-rent-btn:hover {
+
+  background: #c92525;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.20);
+
+}
+
+
+.delete-rent-icon {
+
+  font-size: 19px;
+
+  line-height: 1;
+
+}
+
+
+.app-layout.no-sidebar .main-content {
+  margin-left: 0;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+
+  .delete-student-header-btn {
+    width: 100%;
+  }
+
+}
