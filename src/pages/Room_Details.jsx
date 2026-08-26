@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useAndroidBack } from '../context/useAndroidBack'
 import {getRooms,createRoomData,
   updateRoomData,
   deleteRoomData} from '../services/roomService.js'
@@ -20,11 +19,7 @@ const Room_Details = () => {
 
   const [errors, setErrors] = useState({})
 
-  const {
-  registerBackHandler,
-  clearBackHandler
-} = useAndroidBack()
-  
+
 
   const [newRoom, setNewRoom] = useState({
   roomNo: '',
@@ -40,69 +35,6 @@ const Room_Details = () => {
   securityAmountStatus: 'Pending'
 })
 
-useEffect(() => {
-
-  // View Room
-  if (selectedRoom) {
-
-    registerBackHandler(() => {
-      setSelectedRoom(null)
-    })
-
-    return () => clearBackHandler()
-  }
-
-
-  // Edit Room
-  if (editingRoom) {
-
-    registerBackHandler(() => {
-      setEditingRoom(null)
-    })
-
-    return () => clearBackHandler()
-  }
-
-
-  // Add Room
-  if (addingRoom) {
-
-    registerBackHandler(() => {
-      setAddingRoom(false)
-      setErrors({})
-    })
-
-    return () => clearBackHandler()
-  }
-
-
-  // Delete Room
-  if (deletingRoom) {
-
-    registerBackHandler(() => {
-      setDeletingRoom(false)
-      setRoomToDelete('')
-      setDeleteError('')
-      setDeleteSuccess('')
-    })
-
-    return () => clearBackHandler()
-  }
-
-
-  // No popup
-  clearBackHandler()
-
-}, [
-  selectedRoom,
-  editingRoom,
-  addingRoom,
-  deletingRoom,
-  registerBackHandler,
-  clearBackHandler
-])
-
-
   useEffect(() => {
 
   getRooms()
@@ -110,7 +42,7 @@ useEffect(() => {
       setRooms(rooms)
     })
     .catch((error) => {
-      console.error('Error fetching rooms from SQLite:', error)
+      console.error('Error fetching rooms:', error)
     })
 
 }, [])

@@ -1,4 +1,3 @@
-import { Capacitor } from '@capacitor/core'
 import {
   getAllRooms,
   createRoom,
@@ -6,23 +5,12 @@ import {
   deleteRoom
 } from './api'
 
-import {
-  getAllRoomsFromDb,
-  createRoomInDb,
-  updateRoomInDb,
-  deleteRoomInDb
-} from '../database/roomsDb.js'
-
 
 // =========================
 // GET ALL ROOMS
 // =========================
 
 export const getRooms = async () => {
-
-  if (Capacitor.getPlatform() === 'android') {
-    return await getAllRoomsFromDb()
-  }
 
   const response = await getAllRooms()
 
@@ -36,10 +24,6 @@ export const getRooms = async () => {
 
 export const createRoomData = async (roomData) => {
 
-  if (Capacitor.getPlatform() === 'android') {
-    return await createRoomInDb(roomData)
-  }
-
   const response = await createRoom(roomData)
 
   return response.data
@@ -50,16 +34,20 @@ export const createRoomData = async (roomData) => {
 // UPDATE ROOM
 // =========================
 
-export const updateRoomData = async (roomNo, roomData) => {
+export const updateRoomData = async (
+  roomNo,
+  roomData
+) => {
 
-  if (Capacitor.getPlatform() === 'android') {
-    return await updateRoomInDb(roomNo, roomData)
-  }
-
-  const response = await updateRoom(roomNo, roomData)
+  const response =
+    await updateRoom(
+      roomNo,
+      roomData
+    )
 
   return response.data
 }
+
 
 // =========================
 // DELETE ROOM
@@ -67,13 +55,8 @@ export const updateRoomData = async (roomNo, roomData) => {
 
 export const deleteRoomData = async (roomNo) => {
 
-  if (Capacitor.getPlatform() === 'android') {
-
-    return await deleteRoomInDb(roomNo)
-
-  }
-
-  const response = await deleteRoom(roomNo)
+  const response =
+    await deleteRoom(roomNo)
 
   return response.data
 }

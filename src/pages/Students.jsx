@@ -1,13 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAndroidBack } from '../context/useAndroidBack'
 import { createPortal } from 'react-dom'
-
-import { Capacitor } from '@capacitor/core'
-import {
-  Filesystem,
-  Directory
-} from '@capacitor/filesystem'
-import { Share } from '@capacitor/share'
 
 import { getRooms } from '../services/roomService.js'
 
@@ -21,7 +13,6 @@ import {
   updateStudentPdfData,
   getStudentPdfData
 } from '../services/studentService.js'
-
 
 const Students = () => {
 
@@ -94,91 +85,6 @@ const Students = () => {
 
   const [rooms, setRooms] = useState([])
 
-
-  // ==================================================
-  // ANDROID BACK HANDLER
-  // ==================================================
-
-  const {
-    registerBackHandler,
-    clearBackHandler
-  } = useAndroidBack()
-
-
-  useEffect(() => {
-
-    if (showAddForm || editingStudent) {
-
-      registerBackHandler(() => {
-
-        setShowAddForm(false)
-        setEditingStudent(null)
-        setErrors({})
-        setSelectedPdfFile(null)
-        setPdfMessage('')
-
-      })
-
-      return () => clearBackHandler()
-    }
-
-
-    if (selectedStudent) {
-
-      registerBackHandler(() => {
-        setSelectedStudent(null)
-      })
-
-      return () => clearBackHandler()
-    }
-
-
-    if (studentToLeft) {
-
-      registerBackHandler(() => {
-        setStudentToLeft(null)
-      })
-
-      return () => clearBackHandler()
-    }
-
-
-    if (studentToDelete) {
-
-      registerBackHandler(() => {
-
-        setStudentToDelete(null)
-        setShowDeleteStudent(false)
-        setShowDeleteConfirmation(false)
-
-      })
-
-      return () => clearBackHandler()
-    }
-
-
-    if (deleteSuccess) {
-
-      registerBackHandler(() => {
-        setDeleteSuccess(null)
-      })
-
-      return () => clearBackHandler()
-    }
-
-
-    clearBackHandler()
-
-  }, [
-    showAddForm,
-    editingStudent,
-    selectedStudent,
-    studentToLeft,
-    studentToDelete,
-    deleteSuccess,
-    registerBackHandler,
-    clearBackHandler
-  ])
 
 
   // ==================================================
@@ -704,145 +610,77 @@ const Students = () => {
   }
 
 
-  // ==================================================
+    // ==================================================
   // VIEW STUDENT PDF
-  //
-  // ANDROID:
-  // SQLite -> relative path
-  // relative path -> Filesystem.getUri()
-  // content URI -> Share/Open PDF
-  //
-  // WEB:
-  // Blob -> object URL -> browser PDF viewer
   // ==================================================
 
-  const handleViewStudentPdf = async (
-    studentId
-  ) => {
+ const handleViewStudentPdf = async (
+  studentId
+) => {
 
-    try {
+  try {
 
-      setPdfViewing(true)
-      setPdfMessage('')
+    setPdfViewing(true)
+    setPdfMessage('')
 
-
-      // ==================================================
-      // ANDROID
-      // ==================================================
-
-      if (
-  Capacitor.isNativePlatform() &&
-  Capacitor.getPlatform() === 'android'
-) {
-
-  const pdfPath = await getStudentPdfData(studentId)
-
-  if (!pdfPath) {
-    throw new Error('PDF file was not found.')
-  }
-
-  console.log('PDF path from SQLite:', pdfPath)
-
-  const fileUriResult = await Filesystem.getUri({
-    path: pdfPath,
-    directory: Directory.Data
-  })
-
-  const fileUri = fileUriResult.uri
-
-  console.log('FINAL PDF URI:', fileUri)
-
-  await Share.share({
-    title: `Student ${studentId} PDF`,
-    text: 'Open student PDF',
-    url: fileUri,
-    dialogTitle: 'Open PDF with'
-  })
-
-  return
-}
-
-
-      // ==================================================
-      // BROWSER
-      // ==================================================
-
-      const pdfBlob =
-        await getStudentPdfData(
-          studentId
-        )
-
-
-      if (!pdfBlob) {
-
-        throw new Error(
-          'PDF data was not received.'
-        )
-
-      }
-
-
-      const pdfUrl =
-        URL.createObjectURL(
-          pdfBlob
-        )
-
-
-      const newWindow =
-        window.open(
-          pdfUrl,
-          '_blank'
-        )
-
-
-      if (!newWindow) {
-
-        window.location.href =
-          pdfUrl
-
-      }
-
-
-      setTimeout(() => {
-
-        URL.revokeObjectURL(
-          pdfUrl
-        )
-
-      }, 60000)
-
-
-    } catch (error) {
-
-      console.error(
-        'Error opening student PDF:',
-        error
+    const pdfBlob =
+      await getStudentPdfData(
+        studentId
       )
 
+    if (!pdfBlob) {
 
-      // Android chooser cancellation
-      if (
-        error?.message
-          ?.toLowerCase()
-          ?.includes('cancel')
-      ) {
-
-        return
-
-      }
-
-
-      setPdfMessage(
-        error?.message ||
-        'Unable to open student PDF.'
+      throw new Error(
+        'PDF data was not received.'
       )
 
-
-    } finally {
-
-      setPdfViewing(false)
     }
+
+    const pdfUrl =
+      URL.createObjectURL(
+        pdfBlob
+      )
+
+    const newWindow =
+      window.open(
+        pdfUrl,
+        '_blank'
+      )
+
+    if (!newWindow) {
+
+      window.location.href =
+        pdfUrl
+
+    }
+
+    setTimeout(() => {
+
+      URL.revokeObjectURL(
+        pdfUrl
+      )
+
+    }, 60000)
+
+  } catch (error) {
+
+    console.error(
+      'Error opening student PDF:',
+      error
+    )
+
+    setPdfMessage(
+      error?.message ||
+      'Unable to open student PDF.'
+    )
+
+  } finally {
+
+    setPdfViewing(false)
+
   }
+
+}
 
 
   // ==================================================

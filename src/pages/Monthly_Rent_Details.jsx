@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { useAndroidBack } from '../context/useAndroidBack'
+
 
 import {
   getMonthlyRentByMonthAndYear,
@@ -33,16 +33,6 @@ const Monthly_Rent_Details = () => {
   const [deletingRent, setDeletingRent] = useState(null)
   const [showDeleteForm, setShowDeleteForm] = useState(false)
 
-    // =========================
-  // ANDROID BACK HANDLER
-  // =========================
-
-  const {
-    registerBackHandler,
-    clearBackHandler
-  } = useAndroidBack()
-
-  
 
   // =========================
   // Current Month Rent
@@ -165,87 +155,6 @@ const Monthly_Rent_Details = () => {
 
   const [editPaymentStatus, setEditPaymentStatus] =
     useState('Pending')
-
-
-      // =========================
-  // ANDROID BACK HANDLER
-  // =========================
-
-  useEffect(() => {
-
-    // Delete Rent popup
-    if (showDeleteForm) {
-
-      registerBackHandler(() => {
-        setShowDeleteForm(false)
-        setDeletingRent(null)
-      })
-
-      return () => clearBackHandler()
-    }
-
-
-    // Create Rent popup
-    if (showCreateForm) {
-
-      registerBackHandler(() => {
-        setShowCreateForm(false)
-      })
-
-      return () => clearBackHandler()
-    }
-
-
-    // View Rent popup
-    if (viewRent) {
-
-      registerBackHandler(() => {
-        setViewRent(null)
-        setSelectedStudent(null)
-        setActiveTab('overview')
-      })
-
-      return () => clearBackHandler()
-    }
-
-
-    // Edit Rent popup
-    if (editingRent) {
-
-      registerBackHandler(() => {
-        setEditingRent(null)
-        setEditArrearBill('')
-        setEditPaymentStatus('Pending')
-      })
-
-      return () => clearBackHandler()
-    }
-
-
-    // Student popup
-    if (selectedStudent) {
-
-      registerBackHandler(() => {
-        setSelectedStudent(null)
-      })
-
-      return () => clearBackHandler()
-    }
-
-
-    // No popup open
-    clearBackHandler()
-
-  }, [
-    showDeleteForm,
-    showCreateForm,
-    viewRent,
-    editingRent,
-    selectedStudent,
-    registerBackHandler,
-    clearBackHandler
-  ])
-
 
   // =========================
   // Get Rooms + Students

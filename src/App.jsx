@@ -3,21 +3,14 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  useLocation,
-  useNavigate
+  useLocation
 } from 'react-router-dom'
-
-import { Capacitor } from '@capacitor/core'
-import { App as CapacitorApp } from '@capacitor/app'
 
 import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
 import Students from './pages/Students'
 import Room_Details from './pages/Room_Details'
 import Monthly_Rent_Details from './pages/Monthly_Rent_Details'
-
-import { AndroidBackProvider } from './context/AndroidBackContext'
-import { useAndroidBack } from './context/useAndroidBack'
 
 
 // ==================================================
@@ -48,83 +41,11 @@ function ScrollToTop() {
 
 function AppLayout() {
 
-  const location = useLocation()
-  const navigate = useNavigate()
-
-  const {
-    handleAndroidBack
-  } = useAndroidBack()
-
-  const isAndroidApp =
-    Capacitor.getPlatform() === 'android'
-
-
-  useEffect(() => {
-
-    if (!isAndroidApp) {
-      return
-    }
-
-    const listener = CapacitorApp.addListener(
-      'backButton',
-      () => {
-
-        // --------------------------------
-        // 1. Popup is open
-        // --------------------------------
-
-        const popupWasClosed = handleAndroidBack()
-
-        if (popupWasClosed) {
-          return
-        }
-
-
-        // --------------------------------
-        // 2. Page is open
-        // --------------------------------
-
-        if (location.pathname !== '/') {
-
-          navigate('/')
-
-          return
-        }
-
-
-        // --------------------------------
-        // 3. Already on Dashboard
-        // --------------------------------
-
-        CapacitorApp.minimizeApp()
-
-      }
-    )
-
-    return () => {
-      listener.then(handle => handle.remove())
-    }
-
-  }, [
-    isAndroidApp,
-    location.pathname,
-    navigate,
-    handleAndroidBack
-  ])
-
-
-  // Android:
-  // Sidebar only on Dashboard
-
-  const showSidebar =
-    !isAndroidApp || location.pathname === '/'
-
-
   return (
 
-    <div className={`app-layout ${showSidebar ? '' : 'no-sidebar'}`}>
+    <div className="app-layout">
 
-      {showSidebar && <Sidebar />}
+      <Sidebar />
 
       <main className="main-content">
 
@@ -170,15 +91,9 @@ function App() {
 
     <BrowserRouter>
 
-      <AndroidBackProvider>
+      <ScrollToTop />
 
-        {/* Reset page scroll whenever route changes */}
-
-        <ScrollToTop />
-
-        <AppLayout />
-
-      </AndroidBackProvider>
+      <AppLayout />
 
     </BrowserRouter>
 
