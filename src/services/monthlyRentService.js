@@ -1,3 +1,5 @@
+import { Capacitor } from '@capacitor/core'
+
 import {
   getMrdByMonthAndYear,
   getMrdByRoomNoAndYear,
@@ -6,6 +8,15 @@ import {
   updateMRD,
   deleteMRD
 } from './api'
+
+import {
+  getMrdByMonthAndYearFromDb,
+  getMrdByRoomNoAndYearFromDb,
+  getMrdByMonthYearAndRoomNoFromDb,
+  createMonthlyRentInDb,
+  updateMRDInDb,
+  deleteMRDInDb
+} from '../database/monthlyRentDb.js'
 
 
 // ==================================================
@@ -17,10 +28,22 @@ export const getMonthlyRentByMonthAndYear = async (
   year
 ) => {
 
-  const response = await getMrdByMonthAndYear(
-    month,
-    year
-  )
+  if (Capacitor.getPlatform() === 'android') {
+
+    const result =
+      await getMrdByMonthAndYearFromDb(
+        month,
+        year
+      )
+
+    return result || []
+  }
+
+  const response =
+    await getMrdByMonthAndYear(
+      month,
+      year
+    )
 
   return response.data || []
 }
@@ -35,10 +58,22 @@ export const getMonthlyRentByRoomNoAndYear = async (
   year
 ) => {
 
-  const response = await getMrdByRoomNoAndYear(
-    roomNo,
-    year
-  )
+  if (Capacitor.getPlatform() === 'android') {
+
+    const result =
+      await getMrdByRoomNoAndYearFromDb(
+        roomNo,
+        year
+      )
+
+    return result || []
+  }
+
+  const response =
+    await getMrdByRoomNoAndYear(
+      roomNo,
+      year
+    )
 
   return response.data || []
 }
@@ -48,21 +83,31 @@ export const getMonthlyRentByRoomNoAndYear = async (
 // GET MRD BY MONTH + YEAR + ROOM
 // ==================================================
 
-export const getMonthlyRentByMonthYearAndRoomNo = async (
-  month,
-  year,
-  roomNo
-) => {
+export const getMonthlyRentByMonthYearAndRoomNo =
+  async (
+    month,
+    year,
+    roomNo
+  ) => {
 
-  const response =
-    await getMrdByMonthYearAndRoomNo(
-      month,
-      year,
-      roomNo
-    )
+    if (Capacitor.getPlatform() === 'android') {
 
-  return response.data || null
-}
+      return await getMrdByMonthYearAndRoomNoFromDb(
+        month,
+        year,
+        roomNo
+      )
+    }
+
+    const response =
+      await getMrdByMonthYearAndRoomNo(
+        month,
+        year,
+        roomNo
+      )
+
+    return response.data || null
+  }
 
 
 // ==================================================
@@ -72,6 +117,13 @@ export const getMonthlyRentByMonthYearAndRoomNo = async (
 export const createMonthlyRentData = async (
   mrdData
 ) => {
+
+  if (Capacitor.getPlatform() === 'android') {
+
+    return await createMonthlyRentInDb(
+      mrdData
+    )
+  }
 
   const response =
     await createMonthlyRent(
@@ -92,6 +144,16 @@ export const updateMonthlyRentData = async (
   roomNo,
   updateData
 ) => {
+
+  if (Capacitor.getPlatform() === 'android') {
+
+    return await updateMRDInDb(
+      month,
+      year,
+      roomNo,
+      updateData
+    )
+  }
 
   const response =
     await updateMRD(
@@ -114,6 +176,15 @@ export const deleteMonthlyRentData = async (
   year,
   roomNo
 ) => {
+
+  if (Capacitor.getPlatform() === 'android') {
+
+    return await deleteMRDInDb(
+      month,
+      year,
+      roomNo
+    )
+  }
 
   const response =
     await deleteMRD(
