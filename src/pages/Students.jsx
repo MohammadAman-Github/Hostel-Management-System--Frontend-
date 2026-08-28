@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
+
+import { useAndroidBack } from '../context/useAndroidBack'
+
 import { getRooms } from '../services/roomService.js'
 
 import {
@@ -15,6 +18,13 @@ import {
 } from '../services/studentService.js'
 
 const Students = () => {
+
+
+  const {
+  registerBackHandler,
+  clearBackHandler
+} = useAndroidBack()
+
 
   // ==================================================
   // STUDENTS
@@ -85,6 +95,124 @@ const Students = () => {
 
   const [rooms, setRooms] = useState([])
 
+
+
+  // ==================================================
+// ANDROID BACK BUTTON
+// ==================================================
+
+useEffect(() => {
+
+  // ==========================================
+  // DELETE SUCCESS
+  // ==========================================
+
+  if (deleteSuccess) {
+
+    registerBackHandler(() => {
+      setDeleteSuccess(null)
+    })
+
+    return () => clearBackHandler()
+  }
+
+
+  // ==========================================
+  // DELETE CONFIRMATION
+  // ==========================================
+
+  if (showDeleteConfirmation) {
+
+    registerBackHandler(() => {
+
+      setShowDeleteConfirmation(false)
+      setStudentToDelete(null)
+
+    })
+
+    return () => clearBackHandler()
+  }
+
+
+  // ==========================================
+  // DELETE STUDENT
+  // ==========================================
+
+  if (showDeleteStudent) {
+
+    registerBackHandler(() => {
+
+      setShowDeleteStudent(false)
+      setStudentToDelete(null)
+
+    })
+
+    return () => clearBackHandler()
+  }
+
+
+  // ==========================================
+  // STUDENT LEFT
+  // ==========================================
+
+  if (studentToLeft) {
+
+    registerBackHandler(() => {
+      setStudentToLeft(null)
+    })
+
+    return () => clearBackHandler()
+  }
+
+
+  // ==========================================
+  // VIEW STUDENT
+  // ==========================================
+
+  if (selectedStudent) {
+
+    registerBackHandler(() => {
+      setSelectedStudent(null)
+    })
+
+    return () => clearBackHandler()
+  }
+
+
+  // ==========================================
+  // ADD / EDIT STUDENT
+  // ==========================================
+
+  if (showAddForm || editingStudent) {
+
+    registerBackHandler(() => {
+
+      setShowAddForm(false)
+      setEditingStudent(null)
+
+    })
+
+    return () => clearBackHandler()
+  }
+
+
+  // ==========================================
+  // NO POPUP
+  // ==========================================
+
+  clearBackHandler()
+
+}, [
+  deleteSuccess,
+  showDeleteConfirmation,
+  showDeleteStudent,
+  studentToLeft,
+  selectedStudent,
+  showAddForm,
+  editingStudent,
+  registerBackHandler,
+  clearBackHandler
+])
 
 
   // ==================================================
