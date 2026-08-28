@@ -1,16 +1,24 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   BrowserRouter,
   Routes,
   Route,
-  useLocation
+  useLocation,
+  useNavigate
 } from 'react-router-dom'
+import { initDatabase } from './database/database'
+
+import { Capacitor } from '@capacitor/core'
+import { App as CapacitorApp } from '@capacitor/app'
 
 import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
 import Students from './pages/Students'
 import Room_Details from './pages/Room_Details'
 import Monthly_Rent_Details from './pages/Monthly_Rent_Details'
+
+import { AndroidBackProvider } from './context/AndroidBackContext'
+import { useAndroidBack } from './context/useAndroidBack'
 
 
 // ==================================================
@@ -41,11 +49,93 @@ function ScrollToTop() {
 
 function AppLayout() {
 
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const {
+    handleAndroidBack
+  } = useAndroidBack()
+
+  const isAndroidApp =
+    Capacitor.getPlatform() === 'android'
+
+
+  useEffect(() => {
+
+    if (!isAndroidApp) {
+      return
+    }
+
+    const listener = CapacitorApp.addListener(
+      'backButton',
+      () => {
+
+        // --------------------------------
+        // 1. Popup is open
+        // --------------------------------
+
+        const popupWasClosed =
+          handleAndroidBack()
+
+        if (popupWasClosed) {
+          return
+        }
+
+
+        // --------------------------------
+        // 2. Page is open
+        // --------------------------------
+
+        if (location.pathname !== '/') {
+
+          navigate('/')
+
+          return
+        }
+
+
+        // --------------------------------
+        // 3. Already on Dashboard
+        // --------------------------------
+
+        CapacitorApp.minimizeApp()
+
+      }
+    )
+
+    return () => {
+
+      listener.then(
+        handle => handle.remove()
+      )
+
+    }
+
+  }, [
+    isAndroidApp,
+    location.pathname,
+    navigate,
+    handleAndroidBack
+  ])
+
+
+  // Android:
+  // Sidebar only on Dashboard
+
+  const showSidebar =
+    !isAndroidApp ||
+    location.pathname === '/'
+
+
   return (
 
-    <div className="app-layout">
+    <div
+      className={`app-layout ${
+        showSidebar ? '' : 'no-sidebar'
+      }`}
+    >
 
-      <Sidebar />
+      {showSidebar && <Sidebar />}
 
       <main className="main-content">
 
@@ -87,13 +177,76 @@ function AppLayout() {
 
 function App() {
 
+  const [databaseReady, setDatabaseReady] = useState(false)
+
+  useEffect(() => {
+
+    const initializeApp = async () => {
+
+      try {
+
+        console.log(
+          'APP: Initializing SQLite database...'
+        )
+
+        await initDatabase()
+
+        console.log(
+          'APP: SQLite database ready'
+        )
+
+        setDatabaseReady(true)
+
+      } catch (error) {
+
+        console.error(
+          'APP: SQLite initialization failed:',
+          error
+        )
+
+      }
+
+    }
+
+    initializeApp()
+
+  }, [])
+
+
+  // ------------------------------------------
+  // Wait for SQLite before loading application
+  // ------------------------------------------
+
+  if (!databaseReady) {
+
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '18px'
+        }}
+      >
+        Loading...
+      </div>
+    )
+
+  }
+
+
   return (
 
     <BrowserRouter>
 
-      <ScrollToTop />
+      <AndroidBackProvider>
 
-      <AppLayout />
+        <ScrollToTop />
+
+        <AppLayout />
+
+      </AndroidBackProvider>
 
     </BrowserRouter>
 
