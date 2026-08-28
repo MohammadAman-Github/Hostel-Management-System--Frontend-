@@ -1,3 +1,5 @@
+import { Capacitor } from '@capacitor/core'
+
 import {
   getAllStudents,
   createStudent,
@@ -9,12 +11,26 @@ import {
   updateStudentPdf
 } from './api'
 
+import {
+  getAllStudentsFromDb,
+  createStudentInDb,
+  updateStudentInDb,
+  deleteStudentInDb,
+  studentLeftInDb
+} from '../database/studentsDb.js'
+
 
 // =========================
 // GET ALL STUDENTS
 // =========================
 
 export const getStudents = async () => {
+
+  if (Capacitor.getPlatform() === 'android') {
+
+    return await getAllStudentsFromDb()
+
+  }
 
   const response =
     await getAllStudents()
@@ -30,6 +46,14 @@ export const getStudents = async () => {
 export const createStudentData = async (
   studentData
 ) => {
+
+  if (Capacitor.getPlatform() === 'android') {
+
+    return await createStudentInDb(
+      studentData
+    )
+
+  }
 
   const response =
     await createStudent(
@@ -49,6 +73,15 @@ export const updateStudentData = async (
   studentData
 ) => {
 
+  if (Capacitor.getPlatform() === 'android') {
+
+    return await updateStudentInDb(
+      studentId,
+      studentData
+    )
+
+  }
+
   const response =
     await updateStudent(
       studentId,
@@ -67,6 +100,14 @@ export const deleteStudentData = async (
   studentId
 ) => {
 
+  if (Capacitor.getPlatform() === 'android') {
+
+    return await deleteStudentInDb(
+      studentId
+    )
+
+  }
+
   const response =
     await deleteStudent(
       studentId
@@ -83,6 +124,14 @@ export const deleteStudentData = async (
 export const studentLeftData = async (
   studentId
 ) => {
+
+  if (Capacitor.getPlatform() === 'android') {
+
+    return await studentLeftInDb(
+      studentId
+    )
+
+  }
 
   const response =
     await studentLeft(
