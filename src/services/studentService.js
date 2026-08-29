@@ -20,6 +20,14 @@ import {
 } from '../database/studentsDb.js'
 
 
+import {
+  uploadStudentPdfInDb,
+  updateStudentPdfInDb,
+  getStudentPdfFromDb,
+  studentPdfExistsInDb
+} from '../database/studentPdfDb.js'
+
+
 // =========================
 // GET ALL STUDENTS
 // =========================
@@ -151,6 +159,15 @@ export const uploadStudentPdfData = async (
   file
 ) => {
 
+  if (Capacitor.getPlatform() === 'android') {
+
+    return await uploadStudentPdfInDb(
+      studentId,
+      file
+    )
+
+  }
+
   const response =
     await uploadStudentPdf(
       studentId,
@@ -170,6 +187,15 @@ export const updateStudentPdfData = async (
   file
 ) => {
 
+  if (Capacitor.getPlatform() === 'android') {
+
+    return await updateStudentPdfInDb(
+      studentId,
+      file
+    )
+
+  }
+
   const response =
     await updateStudentPdf(
       studentId,
@@ -179,7 +205,6 @@ export const updateStudentPdfData = async (
   return response.data
 }
 
-
 // =========================
 // GET STUDENT PDF
 // =========================
@@ -188,10 +213,56 @@ export const getStudentPdfData = async (
   studentId
 ) => {
 
+  // =========================
+  // ANDROID
+  // =========================
+
+  if (
+    Capacitor.getPlatform() === 'android'
+  ) {
+
+    const base64 =
+      await getStudentPdfFromDb(
+        studentId
+      )
+
+    if (!base64) {
+      return null
+    }
+
+    return base64
+  }
+
+
+  // =========================
+  // WEB
+  // =========================
+
   const response =
     await getStudentPdf(
       studentId
     )
 
   return response.data
+}
+
+// =========================
+// CHECK STUDENT PDF
+// =========================
+
+export const studentPdfExists = async (
+  studentId
+) => {
+
+  if (
+    Capacitor.getPlatform() === 'android'
+  ) {
+
+    return await studentPdfExistsInDb(
+      studentId
+    )
+
+  }
+
+  return false
 }

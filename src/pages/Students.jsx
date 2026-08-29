@@ -14,8 +14,13 @@ import {
   studentLeftData,
   uploadStudentPdfData,
   updateStudentPdfData,
-  getStudentPdfData
+  getStudentPdfData,
+  studentPdfExists
 } from '../services/studentService.js'
+
+import { Capacitor } from '@capacitor/core'
+import { Filesystem, Directory } from '@capacitor/filesystem'
+import { FileOpener } from '@capacitor-community/file-opener'
 
 const Students = () => {
 
@@ -94,6 +99,48 @@ const Students = () => {
   // ==================================================
 
   const [rooms, setRooms] = useState([])
+
+  const [androidPdfExists, setAndroidPdfExists] = useState(false)
+
+ useEffect(() => {
+
+  const checkStudentPdf = async () => {
+
+    if (!selectedStudent) {
+      setAndroidPdfExists(false)
+      return
+    }
+
+    if (
+      Capacitor.getPlatform() !== 'android'
+    ) {
+      return
+    }
+
+    try {
+
+      const exists =
+        await studentPdfExists(
+          selectedStudent.studentId
+        )
+
+      setAndroidPdfExists(exists)
+
+    } catch (error) {
+
+      console.error(
+        'Error checking student PDF:',
+        error
+      )
+
+      setAndroidPdfExists(false)
+
+    }
+  }
+
+  checkStudentPdf()
+
+}, [selectedStudent])
 
 
 
@@ -213,6 +260,7 @@ useEffect(() => {
   registerBackHandler,
   clearBackHandler
 ])
+
 
 
   // ==================================================
@@ -738,11 +786,11 @@ useEffect(() => {
   }
 
 
-    // ==================================================
+  // ==================================================
   // VIEW STUDENT PDF
   // ==================================================
 
- const handleViewStudentPdf = async (
+  const handleViewStudentPdf = async (
   studentId
 ) => {
 
@@ -750,6 +798,76 @@ useEffect(() => {
 
     setPdfViewing(true)
     setPdfMessage('')
+
+    // ==================================================
+    // ANDROID
+    // ==================================================
+
+    if (
+  Capacitor.getPlatform() === 'android'
+) {
+
+  const pdfBase64 =
+    await getStudentPdfData(
+      studentId
+    )
+
+  if (!pdfBase64) {
+
+    throw new Error(
+      'PDF data was not received.'
+    )
+
+  }
+
+  const fileName =
+    `student_${studentId}.pdf`
+
+  await Filesystem.writeFile({
+
+    path: fileName,
+
+    data: pdfBase64,
+
+    directory: Directory.Cache
+
+  })
+
+
+  const fileUri =
+    await Filesystem.getUri({
+
+      path: fileName,
+
+      directory: Directory.Cache
+
+    })
+
+
+  console.log(
+    'PDF URI:',
+    fileUri.uri
+  )
+
+
+  await FileOpener.open({
+
+    filePath: fileUri.uri,
+
+    contentType: 'application/pdf',
+
+    openWithDefault: true
+
+  })
+
+
+  return
+}
+
+
+    // ==================================================
+    // WEB
+    // ==================================================
 
     const pdfBlob =
       await getStudentPdfData(
@@ -956,6 +1074,14 @@ useEffect(() => {
 
 
       setSelectedPdfFile(null)
+
+      if (
+  Capacitor.getPlatform() === 'android'
+) {
+
+  setAndroidPdfExists(true)
+
+}
 
 
       setPdfMessage(
@@ -2318,33 +2444,37 @@ useEffect(() => {
                   </strong>
 
 
-                  {selectedStudent.pdfPath ? (
+                  {(
+  Capacitor.getPlatform() === 'android'
+    ? androidPdfExists
+    : selectedStudent.pdfPath
+) ? (
 
-                    <button
-                      className="view-btn"
-                      onClick={() =>
-                        handleViewStudentPdf(
-                          selectedStudent.studentId
-                        )
-                      }
-                      disabled={
-                        pdfViewing
-                      }
-                    >
+  <button
+    className="view-btn"
+    onClick={() =>
+      handleViewStudentPdf(
+        selectedStudent.studentId
+      )
+    }
+    disabled={
+      pdfViewing
+    }
+  >
 
-                      {pdfViewing
-                        ? 'Opening PDF...'
-                        : 'View PDF'}
+    {pdfViewing
+      ? 'Opening PDF...'
+      : 'View PDF'}
 
-                    </button>
+  </button>
 
-                  ) : (
+) : (
 
-                    <p>
-                      No PDF uploaded
-                    </p>
+  <p>
+    No PDF uploaded
+  </p>
 
-                  )}
+)}
 
 
                   {pdfMessage && (
