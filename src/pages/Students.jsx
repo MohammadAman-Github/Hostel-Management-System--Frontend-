@@ -22,6 +22,61 @@ import { Capacitor } from '@capacitor/core'
 import { Filesystem, Directory } from '@capacitor/filesystem'
 import { FileOpener } from '@capacitor-community/file-opener'
 
+const PhoneIcon = ({ number }) => {
+
+  const isAndroid =
+    Capacitor.getPlatform() === 'android'
+
+  const handleCall = () => {
+
+    if (!number || !isAndroid) {
+      return
+    }
+
+    window.location.href = `tel:${number}`
+  }
+
+  return (
+    <span
+      className="student-call-btn"
+      onClick={handleCall}
+      role={isAndroid ? 'button' : undefined}
+      style={{
+        cursor: isAndroid ? 'pointer' : 'default'
+      }}
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M22 16.92V20C22 20.55 21.55 21 21 21
+          C10.51 21 3 13.49 3 3
+          C3 2.45 3.45 2 4 2H7.08
+          C7.58 2 8 2.36 8.08 2.85
+          C8.17 3.5 8.35 4.14 8.61 4.75
+          C8.74 5.06 8.66 5.42 8.42 5.66
+          L6.96 7.12
+          C8.23 9.63 10.37 11.77 12.88 13.04
+          L14.34 11.58
+          C14.58 11.34 14.94 11.26 15.25 11.39
+          C15.86 11.65 16.5 11.83 17.15 11.92
+          C17.64 12 18 12.42 18 12.92V16
+          C18 16.55 17.55 17 17 17
+          C16.55 17 16.1 16.98 15.65 16.93"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
+  )
+}
+
 const Students = () => {
 
 
@@ -2286,7 +2341,7 @@ useEffect(() => {
                 </div>
 
 
-                <div>
+                {/* <div>
                   <strong>
                     Contact
                   </strong>
@@ -2294,7 +2349,25 @@ useEffect(() => {
                   <p>
                     {selectedStudent.contactNo}
                   </p>
-                </div>
+                </div> */}
+
+                <div>
+  <strong>
+    Contact
+  </strong>
+
+  <div className="student-contact-row">
+
+    <p>
+      {selectedStudent.contactNo}
+    </p>
+
+    <PhoneIcon
+      number={selectedStudent.contactNo}
+    />
+
+  </div>
+</div>
 
 
                 <div>
@@ -2319,7 +2392,7 @@ useEffect(() => {
                 </div>
 
 
-                <div>
+                {/* <div>
                   <strong>
                     Father's Contact
                   </strong>
@@ -2327,7 +2400,25 @@ useEffect(() => {
                   <p>
                     {selectedStudent.fatherContact}
                   </p>
-                </div>
+                </div> */}
+
+                <div>
+  <strong>
+    Father's Contact
+  </strong>
+
+  <div className="student-contact-row">
+
+    <p>
+      {selectedStudent.fatherContact}
+    </p>
+
+    <PhoneIcon
+      number={selectedStudent.fatherContact}
+    />
+
+  </div>
+</div>
 
 
                 <div>
