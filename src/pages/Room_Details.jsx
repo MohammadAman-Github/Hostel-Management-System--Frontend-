@@ -366,9 +366,15 @@ const handleUpdateRoom = () => {
   }
 
   const roomData = {
-    ...editingRoom,
-    lastMeterReading: Number(editingRoom.lastMeterReading)
-  }
+  ...editingRoom,
+  lastMeterReading: Number(editingRoom.lastMeterReading),
+  arrearBill:
+    editingRoom.arrearBill === '' ||
+    editingRoom.arrearBill === null ||
+    editingRoom.arrearBill === undefined
+      ? 0
+      : Number(editingRoom.arrearBill)
+}
 
   updateRoomData(editingRoom.roomNo, roomData)
     .then((updatedRoom) => {

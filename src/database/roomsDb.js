@@ -168,7 +168,9 @@ export const updateRoomInDb = async (
       monthly_rent = ?,
       light_bill = ?,
       security_amount = ?,
-      security_amount_status = ?
+      security_amount_status = ?,
+      lastMeterReading = ?,
+      arrearBill = ?
     WHERE room_no = ?
     `,
     [
@@ -182,6 +184,8 @@ export const updateRoomInDb = async (
       roomData.lightBill,
       roomData.securityAmount,
       roomData.securityAmountStatus,
+      Number(roomData.lastMeterReading),
+      Number(roomData.arrearBill),
       roomNo
     ]
   )
