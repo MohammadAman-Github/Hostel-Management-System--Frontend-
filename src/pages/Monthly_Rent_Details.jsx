@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-
+import { Capacitor } from '@capacitor/core'
 
 import {
   getMonthlyRentByMonthAndYear,
@@ -19,6 +19,91 @@ import {
 import {
   getRooms
 } from '../services/roomService'
+
+
+ const PhoneIcon = ({ number }) => {
+
+  const isAndroid =
+    Capacitor.getPlatform() === 'android'
+
+  const icon = (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M22 16.92V20C22 20.55 21.55 21 21 21
+        C10.51 21 3 13.49 3 3
+        C3 2.45 3.45 2 4 2H7.08
+        C7.58 2 8 2.36 8.08 2.85
+        C8.17 3.5 8.35 4.14 8.61 4.75
+        C8.74 5.06 8.66 5.42 8.42 5.66
+        L6.96 7.12
+        C8.23 9.63 10.37 11.77 12.88 13.04
+        L14.34 11.58
+        C14.58 11.34 14.94 11.26 15.25 11.39
+        C15.86 11.65 16.5 11.83 17.15 11.92
+        C17.64 12 18 12.42 18 12.92V16
+        C18 16.55 17.55 17 17 17
+        C16.45 17 16 16.55 16 16
+        V14.78
+        C15.62 14.68 15.24 14.55 14.88 14.39
+        L13.39 15.88
+        C13.1 16.17 12.66 16.25 12.29 16.08
+        C8.47 14.34 5.66 11.53 3.92 7.71
+        C3.75 7.34 3.83 6.9 4.12 6.61
+        L5.61 5.12
+        C5.45 4.76 5.32 4.38 5.22 4
+        H4.02
+        C4.01 12.29 10.71 18.99 19 18.98
+        V17.78
+        C18.62 17.68 18.24 17.55 17.88 17.39
+        L16.39 18.88
+        C16.1 19.17 15.66 19.25 15.29 19.08
+        C11.47 17.34 8.66 14.53 6.92 10.71
+        C6.75 10.34 6.83 9.9 7.12 9.61
+        L8.61 8.12
+        C8.45 7.76 8.32 7.38 8.22 7
+        H7.02
+        C7.01 15.29 13.71 21.99 22 21.98
+        V16.92Z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+
+  if (!number) {
+    return null
+  }
+
+  if (isAndroid) {
+    return (
+      <button
+        type="button"
+        className="phone-icon-button"
+        onClick={() => {
+          window.location.href = `tel:${number}`
+        }}
+        aria-label={`Call ${number}`}
+      >
+        {icon}
+      </button>
+    )
+  }
+
+  return (
+    <span
+      className="phone-icon-disabled"
+      aria-hidden="true"
+    >
+      {icon}
+    </span>
+  )
+}
+
 
 const Monthly_Rent_Details = () => {
   
@@ -2493,7 +2578,7 @@ const handleDeleteMRD = () => {
               </div>
 
 
-              <div className="student-detail-item">
+              {/* <div className="student-detail-item">
 
                 <label>
                   Contact No.
@@ -2503,7 +2588,21 @@ const handleDeleteMRD = () => {
                   {selectedStudent.contactNo}
                 </p>
 
-              </div>
+              </div> */}
+
+              <div className="student-detail-item">
+  <label>
+    Contact No.
+  </label>
+
+  <p className="contact-number">
+    {selectedStudent.contactNo}
+
+    <PhoneIcon
+      number={selectedStudent.contactNo}
+    />
+  </p>
+</div>
 
 
               <div className="student-detail-item">
@@ -2519,7 +2618,7 @@ const handleDeleteMRD = () => {
               </div>
 
 
-              <div className="student-detail-item">
+              {/* <div className="student-detail-item">
 
                 <label>
                   Father Contact No.
@@ -2529,7 +2628,21 @@ const handleDeleteMRD = () => {
                   {selectedStudent.fatherContact}
                 </p>
 
-              </div>
+              </div> */}
+
+              <div className="student-detail-item">
+  <label>
+    Father Contact No.
+  </label>
+
+  <p className="contact-number">
+    {selectedStudent.fatherContact}
+
+    <PhoneIcon
+      number={selectedStudent.fatherContact}
+    />
+  </p>
+</div>
 
             </div>
 
