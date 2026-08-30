@@ -3538,3 +3538,309 @@ body {
   }
 
 }
+
+/* ==================================================
+   SETTINGS
+   ================================================== */
+
+.settings-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.settings-buttons button {
+  width: 200px;
+}
+
+.export-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.export-data-note {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* ==================================================
+   SETTINGS PAGE
+   ================================================== */
+
+.settings-page {
+  max-width: 700px;
+}
+
+
+/* ==================================================
+   SETTINGS TITLE
+   ================================================== */
+
+.settings-page h1 {
+  margin-bottom: 10px;
+}
+
+
+.settings-subtitle {
+  margin-top: 0;
+  margin-bottom: 35px;
+}
+
+
+/* ==================================================
+   DATA MANAGEMENT
+   ================================================== */
+
+.settings-section h2 {
+  margin-bottom: 30px;
+}
+
+
+/* ==================================================
+   SETTINGS OPTIONS
+   ================================================== */
+
+.settings-options {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+
+.settings-option {
+  width: 100%;
+}
+
+
+/* ==================================================
+   DATA BUTTON
+   ================================================== */
+
+.data-button {
+  width: 60%;
+  min-height: 70px;
+
+  border: 2px solid;
+
+  border-radius: 14px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 10px 20px;
+
+  cursor: pointer;
+
+  font-size: 24px;
+  font-weight: 600;
+
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.18);
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+
+
+.data-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.22);
+}
+
+
+.data-button:active {
+  transform: translateY(0);
+
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+
+.data-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* ==================================================
+   BUTTON ICON
+   ================================================== */
+
+.data-button-icon {
+  width: 52px;
+  height: 52px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.8);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 30px;
+
+  margin-right: 18px;
+
+  flex-shrink: 0;
+}
+
+
+/* ==================================================
+   BUTTON TEXT
+   ================================================== */
+
+.data-button-text {
+  text-align: left;
+
+  flex: 1;
+}
+
+
+/* ==================================================
+   BACKUP BUTTON
+   ================================================== */
+
+.backup-button {
+  background: #9ee6a8;
+
+  border-color: #16852c;
+
+  color: #075b17;
+}
+
+
+/* ==================================================
+   RESTORE BUTTON
+   ================================================== */
+
+.restore-button {
+  background: #a9c9f5;
+
+  border-color: #1769d1;
+
+  color: #073b8c;
+}
+
+
+/* ==================================================
+   EXPORT BUTTON
+   ================================================== */
+
+.export-button {
+  background: #ffc766;
+
+  border-color: #d47700;
+
+  color: #8a4300;
+}
+
+
+/* ==================================================
+   IMPORT BUTTON
+   ================================================== */
+
+.import-button {
+  background: #c7a1f3;
+
+  border-color: #6b19c9;
+
+  color: #38106d;
+}
+
+
+/* ==================================================
+   DESCRIPTION
+   ================================================== */
+
+.data-description {
+  margin: 14px 0 0 2px;
+
+  font-size: 18px;
+
+  line-height: 1.45;
+}
+
+
+/* ==================================================
+   MESSAGE
+   ================================================== */
+
+.settings-message {
+  margin-top: 25px;
+
+  padding: 12px 15px;
+
+  border-radius: 8px;
+
+  font-size: 16px;
+}
+
+
+/* ==================================================
+   MOBILE
+   ================================================== */
+
+@media (max-width: 600px) {
+
+  .settings-page {
+    width: 100%;
+  }
+
+
+  .data-button {
+    min-height: 64px;
+
+    font-size: 20px;
+
+    padding: 8px 14px;
+  }
+
+
+  .data-button-icon {
+    width: 46px;
+    height: 46px;
+
+    font-size: 26px;
+
+    margin-right: 12px;
+  }
+
+
+  .data-description {
+    font-size: 17px;
+  }
+
+
+  .settings-options {
+    gap: 28px;
+  }
+
+}
+
+/* ==================================================
+   SMALLER SETTINGS TABS
+   ================================================== */
+
+.settings-options .data-button {
+  min-height: 42px;
+  width: 55%;
+  font-size: 16px;
+  padding: 4px 10px;
+}
+
+.settings-options .data-button-icon {
+  width: 34px;
+  height: 34px;
+  font-size: 20px;
+  margin-right: 10px;
+}

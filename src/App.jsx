@@ -16,6 +16,7 @@ import Dashboard from './pages/Dashboard'
 import Students from './pages/Students'
 import Room_Details from './pages/Room_Details'
 import Monthly_Rent_Details from './pages/Monthly_Rent_Details'
+import Settings from './pages/Settings'
 
 import { AndroidBackProvider } from './context/AndroidBackContext'
 import { useAndroidBack } from './context/useAndroidBack'
@@ -159,6 +160,11 @@ function AppLayout() {
           <Route
             path="/monthly-rent"
             element={<Monthly_Rent_Details />}
+          />
+
+          <Route
+            path="/settings"
+            element={<Settings />}
           />
 
         </Routes>
