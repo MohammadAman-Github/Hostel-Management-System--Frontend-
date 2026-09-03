@@ -114,6 +114,7 @@ const Monthly_Rent_Details = () => {
   const [mrdError, setMrdError] = useState('')
   const [mrdErrorTitle, setMrdErrorTitle] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+  const [successTitle, setSuccessTitle] = useState('')
 
   const [deletingRent, setDeletingRent] = useState(null)
   const [showDeleteForm, setShowDeleteForm] = useState(false)
@@ -139,12 +140,24 @@ const Monthly_Rent_Details = () => {
   currentMonth,
   currentYear.toString()
 )
-      .then((response) => {
+  .then((response) => {
 
-        setRentDetails(response || [])
-        setErrorMessage('')
+    if (response && response.length > 0) {
 
-      })
+      setRentDetails(response)
+      setErrorMessage('')
+
+    } else {
+
+      setRentDetails([])
+
+      setErrorMessage(
+        `Data for --> ${currentMonth} - ${currentYear} Not Found`
+      )
+
+    }
+
+  })
       .catch((error) => {
 
         console.error(
@@ -440,10 +453,26 @@ const Monthly_Rent_Details = () => {
         // =========================
         // Success Message
         // =========================
+        setSuccessTitle(
+        'Monthly Rent Created Successfully'
+        )
 
         setSuccessMessage(
           'Monthly rent has been created successfully.'
         )
+        getMonthlyRentByMonthAndYear(
+  createMonth,
+  createYear
+)
+  .then((result) => {
+    setRentDetails(result || [])
+  })
+  .catch((error) => {
+    console.error(
+      'Error refreshing monthly rent details:',
+      error
+    )
+  })
 
 
         // =========================
@@ -501,9 +530,8 @@ const Monthly_Rent_Details = () => {
 
   const handleSearch = () => {
 
-
+    setErrorMessage('')
     setMrdError('')
-
     setMrdErrorTitle('')
 
     // =========================
@@ -556,17 +584,34 @@ const Monthly_Rent_Details = () => {
 }
 
 
-      getMonthlyRentByMonthAndYear(
+  getMonthlyRentByMonthAndYear(
   month,
   year
 )
-  .then((result) => {
+.then((result) => {
 
-    setRentDetails(
-      result || []
+  setRentDetails(
+    result || []
+  )
+
+  if (!result || result.length === 0) {
+
+    setMrdErrorTitle(
+      'Monthly rent details not found in database'
     )
 
-        })
+    setMrdError(
+      `Data for --> ${month} - ${year} Not Found`
+    )
+
+  } else {
+
+    setMrdError('')
+    setMrdErrorTitle('')
+
+  }
+
+})
 
         .catch((error) => {
 
@@ -653,17 +698,34 @@ const Monthly_Rent_Details = () => {
 }
 
 
-      getMonthlyRentByRoomNoAndYear(
+  getMonthlyRentByRoomNoAndYear(
   roomNo,
   year
 )
-  .then((result) => {
+.then((result) => {
 
-    setRentDetails(
-      result || []
+  setRentDetails(
+    result || []
+  )
+
+  if (!result || result.length === 0) {
+
+    setMrdErrorTitle(
+      'Monthly rent details not found in database'
     )
 
-        })
+    setMrdError(
+      `Data for --> Room ${roomNo} - ${year} Not Found`
+    )
+
+  } else {
+
+    setMrdError('')
+    setMrdErrorTitle('')
+
+  }
+
+})
 
       .catch((error) => {
 
@@ -769,18 +831,35 @@ const Monthly_Rent_Details = () => {
 
 
 
-      getMonthlyRentByMonthYearAndRoomNo(
+  getMonthlyRentByMonthYearAndRoomNo(
   month,
   year,
   roomNo
 )
-  .then((result) => {
+.then((result) => {
 
-    setRentDetails(
-      result ? [result] : []
+  setRentDetails(
+    result ? [result] : []
+  )
+
+  if (!result) {
+
+    setMrdErrorTitle(
+      'Monthly rent details not found in database'
     )
 
-        })
+    setMrdError(
+      `Data for --> ${month} - Room ${roomNo} - ${year} Not Found`
+    )
+
+  } else {
+
+    setMrdError('')
+    setMrdErrorTitle('')
+
+  }
+
+})
 
       .catch((error) => {
 
@@ -882,8 +961,11 @@ const Monthly_Rent_Details = () => {
         setEditingRent(null)
 
 
+        setSuccessTitle(
+        'Monthly Rent Updated Successfully'
+      )
         setSuccessMessage(
-          'Monthly rent updated successfully'
+          'Monthly rent has been updated successfully'
         )
 
 
@@ -941,8 +1023,11 @@ const handleDeleteMRD = () => {
       setDeletingRent(null)
       setShowDeleteForm(false)
 
+      setSuccessTitle(
+      'Monthly Rent Deleted Successfully'
+      )
       setSuccessMessage(
-        'Monthly rent deleted successfully.'
+        'Monthly rent has deleted successfully.'
       )
 
       setTimeout(() => {
@@ -1700,124 +1785,130 @@ const handleDeleteMRD = () => {
 
           <tbody>
 
-            {rentDetails.map(
-              (rent) => (
+  {rentDetails.length === 0 ? (
 
-                <tr
-                  key={
-                    `${rent.month}-${rent.year}-${rent.roomNo}`
-                  }
-                >
+    <tr>
+      <td
+        colSpan={9}
+        style={{
+          textAlign: 'center',
+          padding: '30px'
+        }}
+      >
+        No monthly rent details found.
+      </td>
+    </tr>
 
-                  <td>
-                    {rent.roomNo}
-                  </td>
+  ) : (
 
-                  <td>
-                    {rent.month}-{rent.year}
-                  </td>
+    rentDetails.map(
+      (rent) => (
 
-                  <td>
-                    ₹{rent.rent}
-                  </td>
+        <tr
+          key={
+            `${rent.month}-${rent.year}-${rent.roomNo}`
+          }
+        >
 
-                  <td>
-                    ₹{rent.totalLightBill}
-                  </td>
+          <td>
+            {rent.roomNo}
+          </td>
 
-                  <td>
-                    ₹{rent.arrearBill}
-                  </td>
+          <td>
+            {rent.month}-{rent.year}
+          </td>
 
-                  <td>
-                    ₹{rent.totalRent}
-                  </td>
+          <td>
+            ₹{rent.rent}
+          </td>
 
-                  <td>
-                    ₹{rent.totalRentPaid ?? 0}
-                  </td>
+          <td>
+            ₹{rent.totalLightBill}
+          </td>
 
-                  <td>
-                    {
-                      rent.paymentStatus ||
-                      'Pending'
-                    }
-                  </td>
+          <td>
+            ₹{rent.arrearBill}
+          </td>
 
-                  <td>
+          <td>
+            ₹{rent.totalRent}
+          </td>
 
+          <td>
+            ₹{rent.totalRentPaid ?? 0}
+          </td>
 
-                    {/* VIEW */}
+          <td>
+            {
+              rent.paymentStatus ||
+              'Pending'
+            }
+          </td>
 
-                    <button
-                      className="view-btn"
-                      onClick={() => {
+          <td>
 
-                        getMonthlyRentByMonthYearAndRoomNo(
-  rent.month,
-  rent.year,
-  rent.roomNo
-)
-  .then((result) => {
+            {/* VIEW */}
+            <button
+              className="view-btn"
+              onClick={() => {
+                getMonthlyRentByMonthYearAndRoomNo(
+                  rent.month,
+                  rent.year,
+                  rent.roomNo
+                )
+                  .then((result) => {
 
-    setViewRent(
-      result
+                    setViewRent(result)
+
+                    setActiveTab(
+                      'overview'
+                    )
+
+                  })
+                  .catch((error) => {
+
+                    console.error(
+                      'Error fetching rent details:',
+                      error
+                    )
+
+                  })
+              }}
+            >
+              View
+            </button>
+
+            {/* EDIT */}
+            <button
+              className="edit-btn"
+              onClick={() => {
+
+                setEditingRent(rent)
+
+                setEditArrearBill(
+                  rent.arrearBill ?? 0
+                )
+
+                setEditPaymentStatus(
+                  rent.paymentStatus ||
+                  'Pending'
+                )
+
+              }}
+            >
+              Edit
+            </button>
+
+          </td>
+
+        </tr>
+
+      )
     )
 
-                            setActiveTab(
-                              'overview'
-                            )
+  )}
 
-                          })
-
-                          .catch((error) => {
-
-                            console.error(
-                              'Error fetching rent details:',
-                              error
-                            )
-
-                          })
-
-                      }}
-                    >
-                      View
-                    </button>
-
-
-                    {/* EDIT */}
-
-                    <button
-                      className="edit-btn"
-                      onClick={() => {
-
-                        setEditingRent(
-                          rent
-                        )
-
-                        setEditArrearBill(
-                          rent.arrearBill ??
-                          0
-                        )
-
-                        setEditPaymentStatus(
-                          rent.paymentStatus ||
-                          'Pending'
-                        )
-
-                      }}
-                    >
-                      Edit
-                    </button>
-
-                  </td>
-
-                </tr>
-
-              )
-            )}
-
-          </tbody>
+</tbody>
 
         </table>
 
@@ -2862,7 +2953,7 @@ const handleDeleteMRD = () => {
             <div className="delete-success">
 
               <h2>
-                Monthly Rent Created Successfully
+              {successTitle}
               </h2>
 
               <p>
