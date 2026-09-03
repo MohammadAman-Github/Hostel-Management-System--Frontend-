@@ -1637,6 +1637,271 @@ body {
 }
 
 
+/* =====================================================
+   MONTHLY RENT - PAYMENT STATUS TABS
+   ===================================================== */
+
+.monthly-rent-status-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  width: 100%;
+  margin: 18px 0 16px 0;
+}
+
+
+/* =====================================================
+   INDIVIDUAL STATUS TAB
+   ===================================================== */
+
+.monthly-rent-status-tab {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 44px;
+  padding: 0 9px;
+
+  border-radius: 12px;
+
+  background: white;
+
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   HOVER
+   ===================================================== */
+
+.monthly-rent-status-tab:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =====================================================
+   ACTIVE
+   ===================================================== */
+
+.monthly-rent-status-tab.active {
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.10);
+}
+
+
+/* =====================================================
+   ICON
+   ===================================================== */
+
+.monthly-rent-status-icon {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 26px;
+  height: 26px;
+  margin-right: 8px;
+
+  border-radius: 50%;
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  flex-shrink: 0;
+}
+
+
+/* =====================================================
+   TITLE
+   ===================================================== */
+
+.monthly-rent-status-title {
+  font-size: 14px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   COUNT
+   ===================================================== */
+
+.monthly-rent-status-count {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 24px;
+  height: 24px;
+
+  margin-left: auto;
+
+  padding: 0 5px;
+
+  border-radius: 7px;
+
+  color: white;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   PAID
+   ===================================================== */
+
+.monthly-rent-status-tab.paid {
+  border: 1.5px solid #4caf50;
+
+  background: #f1fbea;
+
+  color: #198c3b;
+}
+
+.monthly-rent-status-tab.paid
+.monthly-rent-status-icon {
+  background: #16a34a;
+}
+
+.monthly-rent-status-tab.paid
+.monthly-rent-status-count {
+  background: #22a447;
+}
+
+
+/* =====================================================
+   PARTIALLY PAID
+   ===================================================== */
+
+.monthly-rent-status-tab.partially-paid {
+  border: 1.5px solid #e9a11a;
+
+  background: #fffaf0;
+
+  color: #d98b00;
+}
+
+.monthly-rent-status-tab.partially-paid
+.monthly-rent-status-icon {
+  background: #e99a0b;
+}
+
+.monthly-rent-status-tab.partially-paid
+.monthly-rent-status-count {
+  background: #e99a0b;
+}
+
+
+/* =====================================================
+   PENDING
+   ===================================================== */
+
+.monthly-rent-status-tab.pending {
+  border: 1.5px solid #ef5350;
+
+  background: #fff1f1;
+
+  color: #df3030;
+}
+
+.monthly-rent-status-tab.pending
+.monthly-rent-status-icon {
+  background: #df3030;
+}
+
+.monthly-rent-status-tab.pending
+.monthly-rent-status-count {
+  background: #df3030;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 900px) {
+
+  .monthly-rent-status-tabs {
+    gap: 20px;
+
+    margin-top: 24px;
+    margin-bottom: 18px;
+  }
+
+  .monthly-rent-status-tab {
+    min-height: 55px;
+
+    padding: 0 12px;
+  }
+
+  .monthly-rent-status-icon {
+    width: 32px;
+    height: 32px;
+
+    margin-right: 10px;
+
+    font-size: 20px;
+  }
+
+  .monthly-rent-status-title {
+    font-size: 16px;
+  }
+
+  .monthly-rent-status-count {
+    min-width: 29px;
+    height: 29px;
+
+    font-size: 14px;
+  }
+
+}
+
+
+/* =====================================================
+   ANDROID / SMALL SCREENS
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .monthly-rent-status-tabs {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+
+    margin-top: 20px;
+    margin-bottom: 16px;
+  }
+
+  .monthly-rent-status-tab {
+    min-height: 55px;
+  }
+
+}
+
 /* ==================================================
    MONTHLY RENT TABLE
    ================================================== */
@@ -2495,74 +2760,27 @@ body {
    STUDENT CONTACT / CALL BUTTON
    ================================================== */
 
-.student-contact-row {
+.student-phone-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.student-call-btn {
-  color: #229861;
-  width: 38px;
-  height: 38px;
-
-  border: none;
-  border-radius: 50%;
-
-  background-color: #e8f5e9;
-
-  color: #198754;
-
-  padding: 0;
-
-  font-size: 19px;
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-
-  transition:
-    background-color 0.2s ease,
-    transform 0.15s ease,
-    box-shadow 0.2s ease;
+.student-phone-row p {
+  margin: 0;
 }
-
-.student-call-btn:hover {
-  background-color: #d1e7dd;
-
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.student-call-btn:active {
-  transform: scale(0.88);
-}
-
-.student-call-btn:focus {
-  outline: none;
-}
-
-
 
 .phone-icon-button,
 .phone-icon-disabled {
-  width: 48px;
-  height: 48px;
-
-  margin-left: 12px;
-
+  width: 40px;
+  height: 40px;
+  margin-left: 0;
   border-radius: 50%;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  color: #56cf77f4;
+  color: #20b957;
   background: #d2f1d8;
-
   flex-shrink: 0;
 }
 
@@ -2574,6 +2792,14 @@ body {
 
 .phone-icon-button:hover {
   opacity: 0.85;
+}
+
+.phone-icon-button:active {
+  transform: scale(0.88);
+}
+
+.phone-icon-button:focus {
+  outline: none;
 }
 
 .phone-icon-disabled {

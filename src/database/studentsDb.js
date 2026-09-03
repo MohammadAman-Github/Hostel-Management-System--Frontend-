@@ -31,7 +31,7 @@ export const getAllStudentsFromDb = async () => {
       leaving_date AS leavingDate,
       status
     FROM students
-    ORDER BY student_id
+    ORDER BY room_no ASC, student_id ASC
   `)
 
   return result.values || []

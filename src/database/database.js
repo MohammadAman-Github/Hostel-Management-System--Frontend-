@@ -193,44 +193,83 @@ export const getDatabase = () => {
 
 export const exportDatabase = async () => {
 
-  if (!Capacitor.isNativePlatform()) {
-
-    throw new Error(
-      'Database backup is only available in the Android app.'
-    )
-
-  }
-
   try {
 
-    if (!db) {
+    // ==========================================
+    // ANDROID
+    // ==========================================
+
+    if (Capacitor.isNativePlatform()) {
+
+      if (!db) {
+
+        throw new Error(
+          'SQLite database has not been initialized'
+        )
+
+      }
+
+      console.log(
+        'DATABASE BACKUP: Starting Android export...'
+      )
+
+      const result =
+        await CapacitorSQLite.exportToJson({
+
+          database: DB_NAME,
+
+          jsonexportmode: 'full',
+
+          readonly: false
+
+        })
+
+      console.log(
+        'DATABASE BACKUP: Android export successful'
+      )
+
+      return result.export
+    }
+
+
+    // ==========================================
+    // BROWSER
+    // ==========================================
+
+    console.log(
+      'DATABASE BACKUP: Starting Browser export...'
+    )
+
+    const response =
+      await fetch(
+        'http://localhost:8080/hms/backup',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+
+
+    if (!response.ok) {
 
       throw new Error(
-        'SQLite database has not been initialized'
+        `Backup failed with status ${response.status}`
       )
 
     }
 
-    console.log(
-      'DATABASE BACKUP: Starting export...'
-    )
 
-    const result =
-      await CapacitorSQLite.exportToJson({
+    const backupData =
+      await response.json()
 
-        database: DB_NAME,
-
-        jsonexportmode: 'full',
-
-        readonly: false
-
-      })
 
     console.log(
-      'DATABASE BACKUP: Export successful'
+      'DATABASE BACKUP: Browser export successful'
     )
 
-    return result.export
+    return backupData
 
   } catch (error) {
 
@@ -249,23 +288,11 @@ export const exportDatabase = async () => {
 
 export const importDatabase = async (backupData) => {
 
-  if (!Capacitor.isNativePlatform()) {
-
-    throw new Error(
-      'Database restore is only available in the Android app.'
-    )
-
-  }
-
   try {
 
-    if (!db) {
-
-      throw new Error(
-        'SQLite database has not been initialized'
-      )
-
-    }
+    // ==========================================
+    // VALIDATE BACKUP
+    // ==========================================
 
     if (
       !backupData ||
@@ -279,171 +306,248 @@ export const importDatabase = async (backupData) => {
 
     }
 
+
+    // ==========================================
+    // ANDROID
+    // ==========================================
+
+    if (Capacitor.isNativePlatform()) {
+
+      if (!db) {
+
+        throw new Error(
+          'SQLite database has not been initialized'
+        )
+
+      }
+
+      console.log(
+        'DATABASE RESTORE: Starting Android restore...'
+      )
+
+
+      // ==========================================
+      // FIND TABLES
+      // ==========================================
+
+      const roomTable =
+        backupData.tables.find(
+          table =>
+            table.name === 'room_details'
+        )
+
+      const studentsTable =
+        backupData.tables.find(
+          table =>
+            table.name === 'students'
+        )
+
+      const rentTable =
+        backupData.tables.find(
+          table =>
+            table.name === 'monthly_rent_details'
+        )
+
+
+      if (
+        !roomTable ||
+        !studentsTable ||
+        !rentTable
+      ) {
+
+        throw new Error(
+          'Invalid backup: required HMS tables are missing.'
+        )
+
+      }
+
+
+      // ==========================================
+      // CLEAR EXISTING DATA
+      // ==========================================
+
+      console.log(
+        'DATABASE RESTORE: Clearing Android data...'
+      )
+
+      await db.execute(`
+        DELETE FROM monthly_rent_details;
+      `)
+
+      await db.execute(`
+        DELETE FROM students;
+      `)
+
+      await db.execute(`
+        DELETE FROM room_details;
+      `)
+
+
+      // ==========================================
+      // RESTORE ROOM DETAILS
+      // ==========================================
+
+      for (
+        const row of roomTable.values || []
+      ) {
+
+        await db.run(
+          `
+          INSERT INTO room_details (
+            room_no,
+            room_type,
+            floor,
+            beds,
+            tables,
+            chairs,
+            coolers,
+            monthly_rent,
+            light_bill,
+            lastMeterReading,
+            arrearBill,
+            security_amount,
+            security_amount_status,
+            occupancy_status
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `,
+          row
+        )
+
+      }
+
+
+      // ==========================================
+      // RESTORE STUDENTS
+      // ==========================================
+
+      for (
+        const row of studentsTable.values || []
+      ) {
+
+        await db.run(
+          `
+          INSERT INTO students (
+            student_id,
+            student_name,
+            contact_no,
+            aadhar_no,
+            father_name,
+            father_contact,
+            address_line_1,
+            address_line_2,
+            city,
+            state,
+            pincode,
+            room_no,
+            joining_date,
+            leaving_date,
+            status
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `,
+          row
+        )
+
+      }
+
+
+      // ==========================================
+      // RESTORE MONTHLY RENT DETAILS
+      // ==========================================
+
+      for (
+        const row of rentTable.values || []
+      ) {
+
+        await db.run(
+          `
+          INSERT INTO monthly_rent_details (
+            id,
+            month,
+            year,
+            room_no,
+            rent,
+            last_reading,
+            current_reading,
+            total_light_bill,
+            arrear_bill,
+            total_rent,
+            total_rent_paid,
+            payment_status
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `,
+          row
+        )
+
+      }
+
+
+      console.log(
+        'DATABASE RESTORE: Android restore successful'
+      )
+
+      return
+
+    }
+
+
+    // ==========================================
+    // BROWSER
+    // ==========================================
+
     console.log(
-      'DATABASE RESTORE: Starting restore...'
+      'DATABASE RESTORE: Starting Browser restore...'
     )
 
 
-    // ==========================================
-    // FIND TABLES
-    // ==========================================
+    const response =
+      await fetch(
+        'http://localhost:8080/hms/restore',
+        {
+          method: 'POST',
 
-    const roomTable =
-      backupData.tables.find(
-        table =>
-          table.name === 'room_details'
-      )
+          headers: {
+            'Content-Type': 'application/json'
+          },
 
-    const studentsTable =
-      backupData.tables.find(
-        table =>
-          table.name === 'students'
-      )
-
-    const rentTable =
-      backupData.tables.find(
-        table =>
-          table.name === 'monthly_rent_details'
+          body:
+            JSON.stringify(backupData)
+        }
       )
 
 
-    if (
-      !roomTable ||
-      !studentsTable ||
-      !rentTable
-    ) {
+    if (!response.ok) {
+
+      let errorMessage =
+        `Restore failed with status ${response.status}`
+
+      try {
+
+        const errorData =
+          await response.json()
+
+        if (errorData?.message) {
+
+          errorMessage =
+            errorData.message
+
+        }
+
+      } catch {
+        // Ignore JSON parsing error
+      }
 
       throw new Error(
-        'Invalid backup: required HMS tables are missing.'
-      )
-
-    }
-
-
-    // ==========================================
-    // CLEAR EXISTING DATA
-    // ==========================================
-
-    console.log(
-      'DATABASE RESTORE: Clearing existing data...'
-    )
-
-    await db.execute(`
-      DELETE FROM monthly_rent_details;
-    `)
-
-    await db.execute(`
-      DELETE FROM students;
-    `)
-
-    await db.execute(`
-      DELETE FROM room_details;
-    `)
-
-
-    // ==========================================
-    // RESTORE ROOM DETAILS
-    // ==========================================
-
-    for (
-      const row of roomTable.values || []
-    ) {
-
-      await db.run(
-        `
-        INSERT INTO room_details (
-          room_no,
-          room_type,
-          floor,
-          beds,
-          tables,
-          chairs,
-          coolers,
-          monthly_rent,
-          light_bill,
-          lastMeterReading,
-          arrearBill,
-          security_amount,
-          security_amount_status,
-          occupancy_status
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        row
-      )
-
-    }
-
-
-    // ==========================================
-    // RESTORE STUDENTS
-    // ==========================================
-
-    for (
-      const row of studentsTable.values || []
-    ) {
-
-      await db.run(
-        `
-        INSERT INTO students (
-          student_id,
-          student_name,
-          contact_no,
-          aadhar_no,
-          father_name,
-          father_contact,
-          address_line_1,
-          address_line_2,
-          city,
-          state,
-          pincode,
-          room_no,
-          joining_date,
-          leaving_date,
-          status
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        row
-      )
-
-    }
-
-
-    // ==========================================
-    // RESTORE MONTHLY RENT DETAILS
-    // ==========================================
-
-    for (
-      const row of rentTable.values || []
-    ) {
-
-      await db.run(
-        `
-        INSERT INTO monthly_rent_details (
-          id,
-          month,
-          year,
-          room_no,
-          rent,
-          last_reading,
-          current_reading,
-          total_light_bill,
-          arrear_bill,
-          total_rent,
-          total_rent_paid,
-          payment_status
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        row
+        errorMessage
       )
 
     }
 
 
     console.log(
-      'DATABASE RESTORE: Restore successful'
+      'DATABASE RESTORE: Browser restore successful'
     )
 
   } catch (error) {

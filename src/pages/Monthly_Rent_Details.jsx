@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { createPortal } from 'react-dom'
-import { Capacitor } from '@capacitor/core'
+import MonthlyRentViewModal from '../components/MonthlyRentViewModal'
 
 import {
   getMonthlyRentByMonthAndYear,
@@ -21,95 +22,14 @@ import {
 } from '../services/roomService'
 
 
- const PhoneIcon = ({ number }) => {
-
-  const isAndroid =
-    Capacitor.getPlatform() === 'android'
-
-  const icon = (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M22 16.92V20C22 20.55 21.55 21 21 21
-        C10.51 21 3 13.49 3 3
-        C3 2.45 3.45 2 4 2H7.08
-        C7.58 2 8 2.36 8.08 2.85
-        C8.17 3.5 8.35 4.14 8.61 4.75
-        C8.74 5.06 8.66 5.42 8.42 5.66
-        L6.96 7.12
-        C8.23 9.63 10.37 11.77 12.88 13.04
-        L14.34 11.58
-        C14.58 11.34 14.94 11.26 15.25 11.39
-        C15.86 11.65 16.5 11.83 17.15 11.92
-        C17.64 12 18 12.42 18 12.92V16
-        C18 16.55 17.55 17 17 17
-        C16.45 17 16 16.55 16 16
-        V14.78
-        C15.62 14.68 15.24 14.55 14.88 14.39
-        L13.39 15.88
-        C13.1 16.17 12.66 16.25 12.29 16.08
-        C8.47 14.34 5.66 11.53 3.92 7.71
-        C3.75 7.34 3.83 6.9 4.12 6.61
-        L5.61 5.12
-        C5.45 4.76 5.32 4.38 5.22 4
-        H4.02
-        C4.01 12.29 10.71 18.99 19 18.98
-        V17.78
-        C18.62 17.68 18.24 17.55 17.88 17.39
-        L16.39 18.88
-        C16.1 19.17 15.66 19.25 15.29 19.08
-        C11.47 17.34 8.66 14.53 6.92 10.71
-        C6.75 10.34 6.83 9.9 7.12 9.61
-        L8.61 8.12
-        C8.45 7.76 8.32 7.38 8.22 7
-        H7.02
-        C7.01 15.29 13.71 21.99 22 21.98
-        V16.92Z"
-        fill="currentColor"
-      />
-    </svg>
-  )
-
-  if (!number) {
-    return null
-  }
-
-  if (isAndroid) {
-    return (
-      <button
-        type="button"
-        className="phone-icon-button"
-        onClick={() => {
-          window.location.href = `tel:${number}`
-        }}
-        aria-label={`Call ${number}`}
-      >
-        {icon}
-      </button>
-    )
-  }
-
-  return (
-    <span
-      className="phone-icon-disabled"
-      aria-hidden="true"
-    >
-      {icon}
-    </span>
-  )
-}
-
-
 const Monthly_Rent_Details = () => {
+
+  const navigate = useNavigate()
   
   const [searchType, setSearchType] = useState('month-year')
 
   const [rentDetails, setRentDetails] = useState([])
+
   const [errorMessage, setErrorMessage] = useState('')
   const [mrdError, setMrdError] = useState('')
   const [mrdErrorTitle, setMrdErrorTitle] = useState('')
@@ -121,72 +41,59 @@ const Monthly_Rent_Details = () => {
 
 
   // =========================
-  // Current Month Rent
-  // =========================
+// Current Month Rent
+// =========================
 
-  useEffect(() => {
+useEffect(() => {
 
-    const currentDate = new Date()
+  const currentDate = new Date()
 
-    const currentMonth =
-      currentDate.toLocaleString('en-US', {
-        month: 'long'
-      })
+  const currentMonth =
+    currentDate.toLocaleString('en-US', {
+      month: 'long'
+    })
 
-    const currentYear =
-      currentDate.getFullYear()
+  const currentYear =
+    currentDate.getFullYear()
 
-    getMonthlyRentByMonthAndYear(
-  currentMonth,
-  currentYear.toString()
-)
-  .then((response) => {
+  getMonthlyRentByMonthAndYear(
+    currentMonth,
+    currentYear
+  )
+    .then((data) => {
 
-    if (response && response.length > 0) {
+      setRentDetails(data)
 
-      setRentDetails(response)
-      setErrorMessage('')
+    })
+    .catch((error) => {
 
-    } else {
+      console.error(
+        'Error fetching current month rent details:',
+        error
+      )
 
       setRentDetails([])
 
-      setErrorMessage(
-        `Data for --> ${currentMonth} - ${currentYear} Not Found`
-      )
+      if (
+        error.response &&
+        error.response.data
+      ) {
 
-    }
-
-  })
-      .catch((error) => {
-
-        console.error(
-          'Error fetching current month rent details:',
-          error
+        setErrorMessage(
+          error.response.data
         )
 
-        setRentDetails([])
+      } else {
 
-        if (
-          error.response &&
-          error.response.data
-        ) {
+        setErrorMessage(
+          'Unable to fetch monthly rent details.'
+        )
 
-          setErrorMessage(
-            error.response.data
-          )
+      }
 
-        } else {
+    })
 
-          setErrorMessage(
-            'Unable to fetch monthly rent details.'
-          )
-
-        }
-
-      })
-
-  }, [])
+}, [])
 
 
   // =========================
@@ -233,13 +140,6 @@ const Monthly_Rent_Details = () => {
 
   const [viewRent, setViewRent] =
     useState(null)
-
-  const [selectedStudent, setSelectedStudent] =
-    useState(null)
-
-  const [activeTab, setActiveTab] =
-    useState('overview')
-
 
   // =========================
   // Edit MRD
@@ -1365,6 +1265,92 @@ const handleDeleteMRD = () => {
       </div>
 
 
+    {/* =========================
+    PAYMENT STATUS TABS
+    ========================= */}
+
+<div className="monthly-rent-status-tabs">
+
+  {/* Paid */}
+<button
+  className="monthly-rent-status-tab paid"
+  onClick={() => navigate('/monthly-rent/paid')}
+>
+  <span className="monthly-rent-status-icon">
+    ✓
+  </span>
+
+  <span className="monthly-rent-status-title">
+    Paid
+  </span>
+
+  <span className="monthly-rent-status-count">
+    {
+      rentDetails.filter(
+        (rent) =>
+          (rent.paymentStatus || 'Pending') === 'Paid'
+      ).length
+    }
+  </span>
+</button>
+
+
+  {/* Partially Paid */}
+<button
+  className="monthly-rent-status-tab partially-paid"
+  onClick={() =>
+    navigate('/monthly-rent/partially-paid')
+  }
+>
+  <span className="monthly-rent-status-icon">
+    ◷
+  </span>
+
+  <span className="monthly-rent-status-title">
+    Partially Paid
+  </span>
+
+  <span className="monthly-rent-status-count">
+    {
+      rentDetails.filter(
+        (rent) =>
+          (rent.paymentStatus || 'Pending') ===
+          'Partially Paid'
+      ).length
+    }
+  </span>
+</button>
+
+
+  {/* Pending */}
+<button
+  className="monthly-rent-status-tab pending"
+  onClick={() =>
+    navigate('/monthly-rent/pending')
+  }
+>
+  <span className="monthly-rent-status-icon">
+    !
+  </span>
+
+  <span className="monthly-rent-status-title">
+    Pending
+  </span>
+
+  <span className="monthly-rent-status-count">
+    {
+      rentDetails.filter(
+        (rent) =>
+          (rent.paymentStatus || 'Pending') ===
+          'Pending'
+      ).length
+    }
+  </span>
+</button>
+
+</div>
+
+
       {/* ==================================================
           CREATE MONTHLY RENT POPUP
           ================================================== */}
@@ -1802,7 +1788,7 @@ const handleDeleteMRD = () => {
   ) : (
 
     rentDetails.map(
-      (rent) => (
+  (rent) => (
 
         <tr
           key={
@@ -1815,7 +1801,9 @@ const handleDeleteMRD = () => {
           </td>
 
           <td>
-            {rent.month}-{rent.year}
+          {rent.month} -
+          <br />
+          {rent.year}
           </td>
 
           <td>
@@ -1851,29 +1839,21 @@ const handleDeleteMRD = () => {
             <button
               className="view-btn"
               onClick={() => {
-                getMonthlyRentByMonthYearAndRoomNo(
-                  rent.month,
-                  rent.year,
-                  rent.roomNo
-                )
-                  .then((result) => {
-
-                    setViewRent(result)
-
-                    setActiveTab(
-                      'overview'
-                    )
-
-                  })
-                  .catch((error) => {
-
-                    console.error(
-                      'Error fetching rent details:',
-                      error
-                    )
-
-                  })
-              }}
+  getMonthlyRentByMonthYearAndRoomNo(
+    rent.month,
+    rent.year,
+    rent.roomNo
+  )
+    .then((result) => {
+      setViewRent(result)
+    })
+    .catch((error) => {
+      console.error(
+        'Error fetching rent details:',
+        error
+      )
+    })
+}}
             >
               View
             </button>
@@ -1929,481 +1909,12 @@ const handleDeleteMRD = () => {
 
       )}
 
-
-      {/* ==================================================
-          VIEW RENT DETAILS POPUP
-          ================================================== */}
-
       {viewRent && (
-
-        <div className="monthly-rent-modal-overlay">
-
-          <div className="monthly-rent-modal">
-
-
-            {/* HEADER */}
-
-            <div className="monthly-rent-modal-header">
-
-              <div>
-
-                <h2>
-                  Monthly Rent Details
-                </h2>
-
-                <p className="monthly-rent-modal-subtitle">
-                  Room {viewRent.roomNo}
-                </p>
-
-              </div>
-
-
-              <button
-                className="close-btn"
-                onClick={() =>
-                  setViewRent(null)
-                }
-              >
-                ×
-              </button>
-
-            </div>
-
-
-            {/* TABS */}
-
-            <div className="monthly-rent-tabs">
-
-              <button
-                className={
-                  activeTab === 'overview'
-                    ? 'monthly-rent-tab active'
-                    : 'monthly-rent-tab'
-                }
-                onClick={() =>
-                  setActiveTab('overview')
-                }
-              >
-                Overview
-              </button>
-
-
-              <button
-                className={
-                  activeTab === 'students'
-                    ? 'monthly-rent-tab active'
-                    : 'monthly-rent-tab'
-                }
-                onClick={() =>
-                  setActiveTab('students')
-                }
-              >
-                Students
-              </button>
-
-
-              <button
-                className={
-                  activeTab === 'rent'
-                    ? 'monthly-rent-tab active'
-                    : 'monthly-rent-tab'
-                }
-                onClick={() =>
-                  setActiveTab('rent')
-                }
-              >
-                Rent Details
-              </button>
-
-
-              <button
-                className={
-                  activeTab === 'meter'
-                    ? 'monthly-rent-tab active'
-                    : 'monthly-rent-tab'
-                }
-                onClick={() =>
-                  setActiveTab('meter')
-                }
-              >
-                Meter Reading
-              </button>
-
-            </div>
-
-
-            {/* =========================
-                OVERVIEW
-                ========================= */}
-
-            {activeTab === 'overview' && (
-
-              <div className="monthly-rent-tab-content">
-
-                <div className="monthly-rent-overview-grid">
-
-
-                  {/* MONTH */}
-
-                  <div className="monthly-rent-overview-card">
-
-                    <label>
-                      Month
-                    </label>
-
-                    <p>
-                      {viewRent.month}-
-                      {viewRent.year}
-                    </p>
-
-                  </div>
-
-
-                  {/* LIGHT BILL */}
-
-                  <div className="monthly-rent-overview-card">
-
-                    <label>
-                      Light Bill
-                    </label>
-
-                    <p>
-                      ₹{viewRent.totalLightBill}
-                    </p>
-
-                  </div>
-
-
-                  {/* MONTHLY RENT */}
-
-                  <div className="monthly-rent-overview-card">
-
-                    <label>
-                      Monthly Rent
-                    </label>
-
-                    <p>
-                      ₹{viewRent.rent}
-                    </p>
-
-                  </div>
-
-
-                  {/* TOTAL RENT */}
-
-                  <div className="monthly-rent-overview-card">
-
-                    <label>
-                      Total Rent
-                    </label>
-
-                    <p>
-                      ₹{viewRent.totalRent}
-                    </p>
-
-                  </div>
-
-
-                  {/* TOTAL RENT PAID */}
-
-                  <div className="monthly-rent-overview-card">
-
-                    <label>
-                      Total Rent Paid
-                    </label>
-
-                    <p>
-                      ₹{viewRent.totalRentPaid}
-                    </p>
-
-                  </div>
-
-
-                  {/* PAYMENT STATUS */}
-
-                  <div className="monthly-rent-info-row">
-
-                    <label>
-                      Payment Status
-                    </label>
-
-                    <p>
-
-                      {viewRent.paymentStatus ===
-                      'Paid' ? (
-
-                        <span className="payment-paid">
-                          ✓ Paid
-                        </span>
-
-                      ) : viewRent.paymentStatus ===
-                        'Partially Paid' ? (
-
-                        <span className="payment-partial">
-                          ◐ Partially Paid
-                        </span>
-
-                      ) : (
-
-                        <span className="payment-pending">
-                          ⚠ Pending
-                        </span>
-
-                      )}
-
-                    </p>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            )}
-
-
-            {/* =========================
-                STUDENTS
-                ========================= */}
-
-            {activeTab === 'students' && (
-
-              <div className="monthly-rent-tab-content">
-
-                <h3>
-                  Students
-                </h3>
-
-
-                {students.filter(
-  (student) =>
-    Number(student.roomNo) ===
-    Number(viewRent.roomNo)
-).length > 0 ? (
-
-  <div className="student-name-list">
-
-    {students
-      .filter(
-        (student) =>
-          Number(student.roomNo) ===
-          Number(viewRent.roomNo)
-      )
-      .map(
-        (student) => (
-
-                        <button
-                          key={
-                            student.studentId
-                          }
-                          className="student-name-btn"
-                          onClick={() =>
-                            setSelectedStudent(
-                              student
-                            )
-                          }
-                        >
-
-                          {
-                            student.studentName
-                          }
-
-                        </button>
-
-                      )
-                    )}
-
-                  </div>
-
-                ) : (
-
-                  <p>
-                    No students found
-                  </p>
-
-                )}
-
-              </div>
-
-            )}
-
-
-            {/* =========================
-                RENT DETAILS
-                ========================= */}
-
-            {activeTab === 'rent' && (
-
-              <div className="monthly-rent-tab-content">
-
-                <h3>
-                  Rent Details
-                </h3>
-
-
-                <div className="monthly-rent-info-list">
-
-
-                  <div className="monthly-rent-info-row">
-
-                    <label>
-                      Monthly Rent
-                    </label>
-
-                    <p>
-                      ₹{viewRent.rent}
-                    </p>
-
-                  </div>
-
-
-                  <div className="monthly-rent-info-row">
-
-                    <label>
-                      Arrear Bill
-                    </label>
-
-                    <p>
-                      ₹{viewRent.arrearBill}
-                    </p>
-
-                  </div>
-
-
-                  <div className="monthly-rent-info-row">
-
-                    <label>
-                      Light Bill
-                    </label>
-
-                    <p>
-                      ₹{viewRent.totalLightBill}
-                    </p>
-
-                  </div>
-
-
-                  <div className="monthly-rent-info-row">
-
-                    <label>
-                      Total Rent
-                    </label>
-
-                    <p>
-                      ₹{viewRent.totalRent}
-                    </p>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            )}
-
-
-            {/* =========================
-                METER READING
-                ========================= */}
-
-            {activeTab === 'meter' && (
-
-              <div className="monthly-rent-tab-content">
-
-                <h3>
-                  Meter Reading
-                </h3>
-
-
-                <div className="monthly-rent-info-list">
-
-
-                  <div className="monthly-rent-info-row">
-
-                    <label>
-                      Last Reading
-                    </label>
-
-                    <p>
-                      {viewRent.lastReading}
-                    </p>
-
-                  </div>
-
-
-                  <div className="monthly-rent-info-row">
-
-                    <label>
-                      Current Reading
-                    </label>
-
-                    <p>
-                      {viewRent.currentReading}
-                    </p>
-
-                  </div>
-
-
-                  <div className="monthly-rent-info-row">
-
-                    <label>
-                      Units Consumed
-                    </label>
-
-                    <p>
-                      {
-                        Number(
-                          viewRent.currentReading
-                        ) -
-                        Number(
-                          viewRent.lastReading
-                        )
-                      }
-                    </p>
-
-                  </div>
-
-
-                  <div className="monthly-rent-info-row">
-
-                    <label>
-                      Light Bill
-                    </label>
-
-                    <p>
-                      ₹{viewRent.totalLightBill}
-                    </p>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            )}
-
-
-            {/* BUTTONS */}
-
-            <div className="monthly-rent-modal-buttons">
-
-              <button
-                className="cancel-btn"
-                onClick={() =>
-                  setViewRent(null)
-                }
-              >
-                Close
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      )}
-
+  <MonthlyRentViewModal
+    rent={viewRent}
+    onClose={() => setViewRent(null)}
+  />
+)}
 
       {/* ==================================================
           EDIT MONTHLY RENT DETAILS POPUP
@@ -2595,160 +2106,6 @@ const handleDeleteMRD = () => {
                 }
               >
                 Update
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      )}
-
-
-      {/* ==================================================
-          STUDENT DETAILS POPUP
-          ================================================== */}
-
-      {selectedStudent && (
-
-        <div className="monthly-rent-modal-overlay">
-
-          <div className="monthly-rent-modal student-popup">
-
-
-            {/* HEADER */}
-
-            <div className="monthly-rent-modal-header">
-
-              <h2>
-                Student Details
-              </h2>
-
-
-              <button
-                className="close-btn"
-                onClick={() =>
-                  setSelectedStudent(null)
-                }
-              >
-                ×
-              </button>
-
-            </div>
-
-
-            {/* STUDENT DETAILS */}
-
-            <div className="student-details-popup">
-
-
-              <div className="student-detail-item">
-
-                <label>
-                  Student ID
-                </label>
-
-                <p>
-                  {selectedStudent.studentId}
-                </p>
-
-              </div>
-
-
-              <div className="student-detail-item">
-
-                <label>
-                  Student Name
-                </label>
-
-                <p>
-                  {selectedStudent.studentName}
-                </p>
-
-              </div>
-
-
-              {/* <div className="student-detail-item">
-
-                <label>
-                  Contact No.
-                </label>
-
-                <p>
-                  {selectedStudent.contactNo}
-                </p>
-
-              </div> */}
-
-              <div className="student-detail-item">
-  <label>
-    Contact No.
-  </label>
-
-  <p className="contact-number">
-    {selectedStudent.contactNo}
-
-    <PhoneIcon
-      number={selectedStudent.contactNo}
-    />
-  </p>
-</div>
-
-
-              <div className="student-detail-item">
-
-                <label>
-                  Father Name
-                </label>
-
-                <p>
-                  {selectedStudent.fatherName}
-                </p>
-
-              </div>
-
-
-              {/* <div className="student-detail-item">
-
-                <label>
-                  Father Contact No.
-                </label>
-
-                <p>
-                  {selectedStudent.fatherContact}
-                </p>
-
-              </div> */}
-
-              <div className="student-detail-item">
-  <label>
-    Father Contact No.
-  </label>
-
-  <p className="contact-number">
-    {selectedStudent.fatherContact}
-
-    <PhoneIcon
-      number={selectedStudent.fatherContact}
-    />
-  </p>
-</div>
-
-            </div>
-
-
-            {/* CLOSE */}
-
-            <div className="monthly-rent-modal-buttons">
-
-              <button
-                className="cancel-btn"
-                onClick={() =>
-                  setSelectedStudent(null)
-                }
-              >
-                Close
               </button>
 
             </div>

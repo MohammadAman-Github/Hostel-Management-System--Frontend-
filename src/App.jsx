@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+
+
 import {
   BrowserRouter,
   Routes,
@@ -16,10 +18,12 @@ import Dashboard from './pages/Dashboard'
 import Students from './pages/Students'
 import Room_Details from './pages/Room_Details'
 import Monthly_Rent_Details from './pages/Monthly_Rent_Details'
+import MonthlyRentStatus from './pages/MonthlyRentStatus'
 import Settings from './pages/Settings'
 
 import { AndroidBackProvider } from './context/AndroidBackContext'
 import { useAndroidBack } from './context/useAndroidBack'
+import OccupancyRooms from './pages/OccupancyRooms'
 
 
 // ==================================================
@@ -83,16 +87,29 @@ function AppLayout() {
         }
 
 
-        // --------------------------------
-        // 2. Page is open
-        // --------------------------------
+      // --------------------------------
+// 2. Page is open
+// --------------------------------
 
-        if (location.pathname !== '/') {
+if (location.pathname !== '/') {
 
-          navigate('/')
+  // Monthly Rent child/status pages
+  if (
+    location.pathname === '/monthly-rent/paid' ||
+    location.pathname === '/monthly-rent/partially-paid' ||
+    location.pathname === '/monthly-rent/pending'
+  ) {
 
-          return
-        }
+    navigate('/monthly-rent')
+
+    return
+  }
+
+  // Other pages
+  navigate('/')
+
+  return
+}
 
 
         // --------------------------------
@@ -153,14 +170,44 @@ function AppLayout() {
           />
 
           <Route
-            path="/rooms"
-            element={<Room_Details />}
-          />
+  path="/rooms"
+  element={<Room_Details />}
+/>
+
+<Route
+  path="/rooms/occupied"
+  element={<OccupancyRooms />}
+/>
+
+<Route
+  path="/rooms/partially-occupied"
+  element={<OccupancyRooms />}
+/>
+
+<Route
+  path="/rooms/vacant"
+  element={<OccupancyRooms />}
+/>
 
           <Route
             path="/monthly-rent"
             element={<Monthly_Rent_Details />}
           />
+
+          <Route
+  path="/monthly-rent/paid"
+  element={<MonthlyRentStatus />}
+/>
+
+<Route
+  path="/monthly-rent/partially-paid"
+  element={<MonthlyRentStatus />}
+/>
+
+<Route
+  path="/monthly-rent/pending"
+  element={<MonthlyRentStatus />}
+/>
 
           <Route
             path="/settings"

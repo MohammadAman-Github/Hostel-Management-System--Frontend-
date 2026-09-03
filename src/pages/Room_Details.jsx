@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAndroidBack } from '../context/useAndroidBack'
 import {getRooms,createRoomData,
   updateRoomData,
@@ -6,6 +7,7 @@ import {getRooms,createRoomData,
 import { createPortal } from 'react-dom'
 
 const Room_Details = () => {
+  const navigate = useNavigate()
 
   const [rooms, setRooms] = useState([])
   const [search, setSearch] = useState('')
@@ -206,10 +208,16 @@ const handleCreateRoom = () => {
 
       console.log('Room created:', createdRoom)
 
-      setRooms((prevRooms) => [
-        ...prevRooms,
-        createdRoom
-      ])
+      getRooms()
+  .then((rooms) => {
+    setRooms(rooms)
+  })
+  .catch((error) => {
+    console.error(
+      'Error refreshing rooms:',
+      error
+    )
+  })
 
       setAddingRoom(false)
       setErrors({})
@@ -536,14 +544,16 @@ const handleDeleteRoom = () => {
 
 
   <div
-    className="summary-card"
-    style={{
-      background: "white",
-      padding: "15px 18px",
-      borderRadius: "10px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
-    }}
-  >
+  className="summary-card"
+  onClick={() => navigate('/rooms/occupied')}
+  style={{
+    background: "white",
+    padding: "15px 18px",
+    borderRadius: "10px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+    cursor: "pointer"
+  }}
+>
     <h3 style={{ margin: "0 0 6px", fontSize: "16px" }}>
       Occupied
     </h3>
@@ -555,14 +565,16 @@ const handleDeleteRoom = () => {
 
 
   <div
-    className="summary-card"
-    style={{
-      background: "white",
-      padding: "15px 18px",
-      borderRadius: "10px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
-    }}
-  >
+  className="summary-card"
+  onClick={() => navigate('/rooms/partially-occupied')}
+  style={{
+    background: "white",
+    padding: "15px 18px",
+    borderRadius: "10px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+    cursor: "pointer"
+  }}
+>
     <h3 style={{ margin: "0 0 6px", fontSize: "16px" }}>
       Partially Occupied
     </h3>
@@ -574,14 +586,16 @@ const handleDeleteRoom = () => {
 
 
   <div
-    className="summary-card"
-    style={{
-      background: "white",
-      padding: "15px 18px",
-      borderRadius: "10px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
-    }}
-  >
+  className="summary-card"
+  onClick={() => navigate('/rooms/vacant')}
+  style={{
+    background: "white",
+    padding: "15px 18px",
+    borderRadius: "10px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+    cursor: "pointer"
+  }}
+>
     <h3 style={{ margin: "0 0 6px", fontSize: "16px" }}>
       Vacant
     </h3>

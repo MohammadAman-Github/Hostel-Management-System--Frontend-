@@ -731,10 +731,16 @@ useEffect(() => {
       )
 
 
-      setStudents((prevStudents) => [
-        ...prevStudents,
-        createdStudent
-      ])
+    getStudents()
+  .then((response) => {
+    setStudents(response)
+  })
+  .catch((error) => {
+    console.error(
+      'Error refreshing students:',
+      error
+    )
+  })
 
 
       // ----------------------------------------------
@@ -1595,7 +1601,6 @@ useEffect(() => {
 
             <tr>
 
-              <th>ID</th>
               <th>Name</th>
               <th>Contact</th>
 
@@ -1628,10 +1633,6 @@ useEffect(() => {
                   <tr
                     key={student.studentId}
                   >
-
-                    <td>
-                      {student.studentId}
-                    </td>
 
                     <td>
                       {student.studentName}
@@ -1716,7 +1717,7 @@ useEffect(() => {
               <tr>
 
                 <td
-                  colSpan="6"
+                  colSpan="5"
                   style={{
                     textAlign: 'center'
                   }}
