@@ -1,77 +1,104 @@
-// import { Link } from 'react-router-dom'
-
-// const Sidebar = () => {
-//   return (
-//     <div className="sidebar">
-
-//       <h2 className="sidebar-title">
-//         HMS
-//       </h2>
-
-//       <div className="sidebar-menu">
-
-//         <Link to="/">
-//           Dashboard
-//         </Link>
-
-//         <Link to="/students">
-//           Students
-//         </Link>
-
-//         <Link to="/rooms">
-//           Rooms
-//         </Link>
-
-//         <Link to="/monthly-rent">
-//           Monthly Rent
-//         </Link>
-
-//       </div>
-
-//     </div>
-//   )
-// }
-
-// export default Sidebar
-
-
-
 import { Link } from 'react-router-dom'
 
+
 const Sidebar = () => {
+
   return (
-    <div className="sidebar">
+
+    <aside className="sidebar">
+
+      {/* ==================================================
+          SIDEBAR TITLE
+          ================================================== */}
 
       <h2 className="sidebar-title">
         HMS
       </h2>
 
-      <div className="sidebar-menu">
 
-        <Link to="/">
+      {/* ==================================================
+          SIDEBAR MENU
+          ================================================== */}
+
+      <nav className="sidebar-menu">
+
+        {/* ------------------------------------------
+            DASHBOARD
+            ------------------------------------------ */}
+
+        <Link
+          to="/"
+          className="sidebar-link"
+        >
           Dashboard
         </Link>
 
-        <Link to="/students">
+
+        {/* ------------------------------------------
+            STUDENTS
+            ------------------------------------------ */}
+
+        <Link
+          to="/students"
+          className="sidebar-link"
+        >
           Students
         </Link>
 
-        <Link to="/rooms">
+
+        {/* ------------------------------------------
+            ROOMS
+            ------------------------------------------ */}
+
+        <Link
+          to="/rooms"
+          className="sidebar-link"
+        >
           Rooms
         </Link>
 
-        <Link to="/monthly-rent">
+
+        {/* ------------------------------------------
+            MONTHLY RENT
+            ------------------------------------------ */}
+
+        <Link
+          to="/monthly-rent"
+          className="sidebar-link"
+        >
           Monthly Rent
         </Link>
 
-        <Link to="/settings">
+
+        {/* ------------------------------------------
+            PAYMENT QR
+            ------------------------------------------ */}
+
+        <Link
+          to="/payment-qr"
+          className="sidebar-link"
+        >
+          Payment QR
+        </Link>
+
+
+        {/* ------------------------------------------
+            SETTINGS
+            ------------------------------------------ */}
+
+        <Link
+          to="/settings"
+          className="sidebar-link"
+        >
           Settings
         </Link>
 
-      </div>
+      </nav>
 
-    </div>
+    </aside>
+
   )
 }
+
 
 export default Sidebar

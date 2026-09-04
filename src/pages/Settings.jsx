@@ -1,7 +1,23 @@
 import { useState, useRef } from 'react'
+
 import { Capacitor } from '@capacitor/core'
-import { Filesystem, Directory } from '@capacitor/filesystem'
+import {
+  Filesystem,
+  Directory
+} from '@capacitor/filesystem'
+
 import { Share } from '@capacitor/share'
+
+import {
+  getSavedPaymentQr,
+  savePaymentQr
+} from '../utils/paymentQrStorage'
+
+import {
+  decodePaymentQr
+} from '../utils/paymentQrDecoder'
+
+import paymentQr from '../assets/payment-qr.png'
 
 import {
   exportDatabase,
@@ -11,18 +27,88 @@ import {
 
 const Settings = () => {
 
+  // ==================================================
+  // INITIAL PAYMENT QR
+  // ==================================================
+
+  const savedPaymentQr =
+    getSavedPaymentQr()
+
+
+  const [paymentQrImage, setPaymentQrImage] =
+    useState(
+      savedPaymentQr?.qr ||
+      paymentQr
+    )
+
+
+  // ==================================================
+  // PAYMENT DETAILS
+  // ==================================================
+
+  const [paymentQrName, setPaymentQrName] =
+    useState(
+      savedPaymentQr?.name ||
+      ''
+    )
+
+
+  const [paymentQrUpiId, setPaymentQrUpiId] =
+    useState(
+      savedPaymentQr?.upiId ||
+      ''
+    )
+
+
+  const [paymentQrNote, setPaymentQrNote] =
+    useState(
+      savedPaymentQr?.note ||
+      ''
+    )
+
+
+  // ==================================================
+  // DETECTED QR DATA
+  // ==================================================
+
+  const [detectedQrData, setDetectedQrData] =
+    useState({
+      name: '',
+      upiId: '',
+      note: ''
+    })
+
+
+  // ==================================================
+  // STATES
+  // ==================================================
+
   const [backupLoading, setBackupLoading] =
     useState(false)
 
-  const [message, setMessage] =
-    useState('')
 
   const [restoreLoading, setRestoreLoading] =
     useState(false)
 
+
+  const [message, setMessage] =
+    useState('')
+
+
+  const [qrReading, setQrReading] =
+    useState(false)
+
+
+  // ==================================================
+  // FILE INPUT REFERENCES
+  // ==================================================
+
   const fileInputRef =
     useRef(null)
 
+
+  const paymentQrInputRef =
+    useRef(null)
 
 
   // ==================================================
@@ -36,6 +122,7 @@ const Settings = () => {
       setBackupLoading(true)
       setMessage('')
 
+
       console.log(
         'SETTINGS: Creating database backup...'
       )
@@ -43,6 +130,7 @@ const Settings = () => {
 
       const backup =
         await exportDatabase()
+
 
       const jsonString =
         JSON.stringify(
@@ -52,57 +140,51 @@ const Settings = () => {
         )
 
 
-      // ------------------------------------------
+      // ==================================================
       // ANDROID
-      // ------------------------------------------
+      // ==================================================
 
-      if (Capacitor.isNativePlatform()) {
+      if (
+        Capacitor.isNativePlatform()
+      ) {
 
         // ------------------------------------------
-        // Create backup directory
+        // Create backup directory if required
         // ------------------------------------------
 
         try {
 
           await Filesystem.stat({
-            path: 'hms',
-            directory: Directory.Documents
-          })
 
-          console.log(
-            'SETTINGS: Backup directory already exists'
-          )
+            path: 'hms',
+
+            directory:
+              Directory.Documents
+
+          })
 
         } catch {
 
           await Filesystem.mkdir({
-            path: 'hms',
-            directory: Directory.Documents
-          })
 
-          console.log(
-            'SETTINGS: Backup directory created'
-          )
+            path: 'hms',
+
+            directory:
+              Directory.Documents
+
+          })
 
         }
 
 
         // ------------------------------------------
-        // Backup filename
-        // ------------------------------------------
-
-        const fileName =
-          'hms/HMS_Backup.json'
-
-
-        // ------------------------------------------
-        // Save backup
+        // Backup file
         // ------------------------------------------
 
         await Filesystem.writeFile({
 
           path:
-            fileName,
+            'hms/HMS_Backup.json',
 
           data:
             jsonString,
@@ -116,12 +198,6 @@ const Settings = () => {
         })
 
 
-        console.log(
-          'SETTINGS: Backup saved:',
-          fileName
-        )
-
-
         setMessage(
           'Backup created successfully.'
         )
@@ -131,10 +207,9 @@ const Settings = () => {
       }
 
 
-      // ------------------------------------------
+      // ==================================================
       // BROWSER
-      // Same behavior as Export Data
-      // ------------------------------------------
+      // ==================================================
 
       const blob =
         new Blob(
@@ -145,11 +220,14 @@ const Settings = () => {
           }
         )
 
+
       const url =
         URL.createObjectURL(blob)
 
+
       const link =
         document.createElement('a')
+
 
       link.href =
         url
@@ -157,19 +235,28 @@ const Settings = () => {
       link.download =
         'HMS_Backup.json'
 
-      document.body.appendChild(link)
+
+      document.body.appendChild(
+        link
+      )
+
 
       link.click()
 
-      document.body.removeChild(link)
 
-      URL.revokeObjectURL(url)
+      document.body.removeChild(
+        link
+      )
+
+
+      URL.revokeObjectURL(
+        url
+      )
 
 
       setMessage(
         'Backup created successfully.'
       )
-
 
     } catch (error) {
 
@@ -177,6 +264,7 @@ const Settings = () => {
         'SETTINGS: Backup failed:',
         error
       )
+
 
       setMessage(
         `Backup failed: ${
@@ -194,7 +282,6 @@ const Settings = () => {
   }
 
 
-
   // ==================================================
   // EXPORT DATA
   // ==================================================
@@ -206,34 +293,35 @@ const Settings = () => {
       setBackupLoading(true)
       setMessage('')
 
+
       console.log(
         'SETTINGS: Creating backup for export...'
       )
 
 
-      // ------------------------------------------
-      // Android
-      // ------------------------------------------
+      const backup =
+        await exportDatabase()
 
-      if (Capacitor.isNativePlatform()) {
 
-        const backup =
-          await exportDatabase()
+      const jsonString =
+        JSON.stringify(
+          backup,
+          null,
+          2
+        )
 
-        const jsonString =
-          JSON.stringify(
-            backup,
-            null,
-            2
-          )
+
+      // ==================================================
+      // ANDROID
+      // ==================================================
+
+      if (
+        Capacitor.isNativePlatform()
+      ) {
 
         const fileName =
           'HMS_Backup.json'
 
-
-        // ------------------------------------------
-        // Save temporary export file
-        // ------------------------------------------
 
         await Filesystem.writeFile({
 
@@ -252,10 +340,6 @@ const Settings = () => {
         })
 
 
-        // ------------------------------------------
-        // Get file URI
-        // ------------------------------------------
-
         const fileUri =
           await Filesystem.getUri({
 
@@ -267,16 +351,6 @@ const Settings = () => {
 
           })
 
-
-        console.log(
-          'SETTINGS: Export file created:',
-          fileUri.uri
-        )
-
-
-        // ------------------------------------------
-        // Share file
-        // ------------------------------------------
 
         await Share.share({
 
@@ -304,19 +378,9 @@ const Settings = () => {
       }
 
 
-      // ------------------------------------------
-      // Browser
-      // ------------------------------------------
-
-      const backup =
-        await exportDatabase()
-
-      const jsonString =
-        JSON.stringify(
-          backup,
-          null,
-          2
-        )
+      // ==================================================
+      // BROWSER
+      // ==================================================
 
       const blob =
         new Blob(
@@ -327,11 +391,14 @@ const Settings = () => {
           }
         )
 
+
       const url =
         URL.createObjectURL(blob)
 
+
       const link =
         document.createElement('a')
+
 
       link.href =
         url
@@ -339,19 +406,28 @@ const Settings = () => {
       link.download =
         'HMS_Backup.json'
 
-      document.body.appendChild(link)
+
+      document.body.appendChild(
+        link
+      )
+
 
       link.click()
 
-      document.body.removeChild(link)
 
-      URL.revokeObjectURL(url)
+      document.body.removeChild(
+        link
+      )
+
+
+      URL.revokeObjectURL(
+        url
+      )
 
 
       setMessage(
         'Backup exported successfully.'
       )
-
 
     } catch (error) {
 
@@ -359,6 +435,7 @@ const Settings = () => {
         'SETTINGS: Export failed:',
         error
       )
+
 
       setMessage(
         `Export failed: ${
@@ -376,7 +453,6 @@ const Settings = () => {
   }
 
 
-
   // ==================================================
   // RESTORE AUTOMATIC BACKUP
   // ==================================================
@@ -389,15 +465,13 @@ const Settings = () => {
       setMessage('')
 
 
-      // ------------------------------------------
+      // ==================================================
       // ANDROID
-      // ------------------------------------------
+      // ==================================================
 
-      if (Capacitor.isNativePlatform()) {
-
-        // ------------------------------------------
-        // Read automatic backup
-        // ------------------------------------------
+      if (
+        Capacitor.isNativePlatform()
+      ) {
 
         const backupFile =
           await Filesystem.readFile({
@@ -414,19 +488,11 @@ const Settings = () => {
           })
 
 
-        // ------------------------------------------
-        // Parse backup
-        // ------------------------------------------
-
         const backupData =
           JSON.parse(
             backupFile.data
           )
 
-
-        // ------------------------------------------
-        // Confirm restore
-        // ------------------------------------------
 
         const confirmed =
           window.confirm(
@@ -441,10 +507,6 @@ const Settings = () => {
 
         }
 
-
-        // ------------------------------------------
-        // Restore database
-        // ------------------------------------------
 
         console.log(
           'SETTINGS: Restoring automatic backup...'
@@ -465,17 +527,11 @@ const Settings = () => {
       }
 
 
-      // ------------------------------------------
+      // ==================================================
       // BROWSER
-      // Same behavior as Import & Restore
-      // ------------------------------------------
-
-      console.log(
-        'SETTINGS: Opening backup file picker...'
-      )
+      // ==================================================
 
       fileInputRef.current?.click()
-
 
     } catch (error) {
 
@@ -483,6 +539,7 @@ const Settings = () => {
         'SETTINGS: Restore failed:',
         error
       )
+
 
       setMessage(
         `Restore failed: ${
@@ -500,23 +557,17 @@ const Settings = () => {
   }
 
 
-
   // ==================================================
   // IMPORT DATA
   // ==================================================
 
   const handleImport = () => {
 
-    console.log(
-      'SETTINGS: Opening file picker...'
-    )
-
     setMessage('')
 
     fileInputRef.current?.click()
 
   }
-
 
 
   // ==================================================
@@ -527,6 +578,7 @@ const Settings = () => {
 
     const file =
       event.target.files?.[0]
+
 
     if (!file) {
 
@@ -542,7 +594,7 @@ const Settings = () => {
 
 
       // ------------------------------------------
-      // Check file type
+      // Validate file type
       // ------------------------------------------
 
       if (
@@ -587,6 +639,7 @@ const Settings = () => {
 
       let backupData
 
+
       try {
 
         backupData =
@@ -602,13 +655,15 @@ const Settings = () => {
 
 
       // ------------------------------------------
-      // Validate backup
+      // Validate HMS backup
       // ------------------------------------------
 
       if (
         !backupData ||
         backupData.database !== 'hms' ||
-        !Array.isArray(backupData.tables)
+        !Array.isArray(
+          backupData.tables
+        )
       ) {
 
         throw new Error(
@@ -619,7 +674,7 @@ const Settings = () => {
 
 
       // ------------------------------------------
-      // Confirm import
+      // Confirm
       // ------------------------------------------
 
       const confirmed =
@@ -637,7 +692,7 @@ const Settings = () => {
 
 
       // ------------------------------------------
-      // Restore imported database
+      // Restore
       // ------------------------------------------
 
       console.log(
@@ -661,6 +716,7 @@ const Settings = () => {
         error
       )
 
+
       setMessage(
         `Import failed: ${
           error?.message ||
@@ -678,6 +734,518 @@ const Settings = () => {
 
   }
 
+
+  // ==================================================
+  // REPLACE PAYMENT QR
+  // ==================================================
+
+  const handleReplaceQr = async (event) => {
+
+    const file =
+      event.target.files?.[0]
+
+
+    if (!file) {
+
+      return
+
+    }
+
+
+    // ------------------------------------------
+    // Validate image
+    // ------------------------------------------
+
+    if (
+      !file.type.startsWith('image/')
+    ) {
+
+      setMessage(
+        'Please select a valid QR image.'
+      )
+
+      event.target.value = ''
+
+      return
+
+    }
+
+
+    // Save current image before processing
+    const previousQrImage =
+      paymentQrImage
+
+
+    try {
+
+      setQrReading(true)
+
+      setMessage(
+        'Reading payment QR...'
+      )
+
+
+      // ==================================================
+      // READ IMAGE
+      // ==================================================
+
+      const qrData =
+        await new Promise(
+          (resolve, reject) => {
+
+            const reader =
+              new FileReader()
+
+
+            reader.onload = () => {
+
+              resolve(
+                reader.result
+              )
+
+            }
+
+
+            reader.onerror = () => {
+
+              reject(
+                new Error(
+                  'Failed to read image.'
+                )
+              )
+
+            }
+
+
+            reader.readAsDataURL(
+              file
+            )
+
+          }
+        )
+
+
+      // ==================================================
+      // DECODE QR
+      // ==================================================
+
+      const decodedData =
+        await decodePaymentQr(
+          qrData
+        )
+
+
+      console.log(
+        'SETTINGS: Decoded QR data:',
+        decodedData
+      )
+
+
+      // ==================================================
+      // UPDATE IMAGE
+      // ==================================================
+
+      setPaymentQrImage(
+        qrData
+      )
+
+
+      // ==================================================
+      // CLEAR OLD DETAILS
+      // ==================================================
+
+      setPaymentQrName('')
+
+      setPaymentQrUpiId('')
+
+      setPaymentQrNote('')
+
+
+      // ==================================================
+      // SAVE DETECTED DETAILS TEMPORARILY
+      // ==================================================
+
+      setDetectedQrData({
+
+        name:
+          decodedData?.name ||
+          '',
+
+        upiId:
+          decodedData?.upiId ||
+          '',
+
+        note:
+          decodedData?.note ||
+          ''
+
+      })
+
+
+      // ==================================================
+      // RESULT MESSAGE
+      // ==================================================
+
+      const hasDetectedData =
+        Boolean(
+          decodedData?.name ||
+          decodedData?.upiId ||
+          decodedData?.note
+        )
+
+
+      if (hasDetectedData) {
+
+        setMessage(
+          'QR detected. You can change any payment detail before saving.'
+        )
+
+      } else {
+
+        setMessage(
+          'QR selected. No payment details were detected. You can enter them manually.'
+        )
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        'SETTINGS: QR reading failed:',
+        error
+      )
+
+
+      // Restore previous image
+      setPaymentQrImage(
+        previousQrImage
+      )
+
+
+      setDetectedQrData({
+
+        name: '',
+        upiId: '',
+        note: ''
+
+      })
+
+
+      setMessage(
+        'Failed to read the selected QR image.'
+      )
+
+    } finally {
+
+      setQrReading(false)
+
+      event.target.value = ''
+
+    }
+
+  }
+
+
+  // ==================================================
+  // SAVE PAYMENT QR + DETAILS
+  // ==================================================
+
+  const handleSavePaymentQr = () => {
+
+    // ------------------------------------------
+    // Manual values have priority
+    // ------------------------------------------
+
+    const finalName =
+      paymentQrName.trim() ||
+      detectedQrData.name.trim()
+
+
+    const finalUpiId =
+      paymentQrUpiId.trim() ||
+      detectedQrData.upiId.trim()
+
+
+    const finalNote =
+      paymentQrNote.trim() ||
+      detectedQrData.note.trim()
+
+
+    // ------------------------------------------
+    // Save
+    // ------------------------------------------
+
+    savePaymentQr({
+
+      qr:
+        paymentQrImage,
+
+      name:
+        finalName,
+
+      upiId:
+        finalUpiId,
+
+      note:
+        finalNote
+
+    })
+
+
+    // ------------------------------------------
+    // Update UI
+    // ------------------------------------------
+
+    setPaymentQrName(
+      finalName
+    )
+
+
+    setPaymentQrUpiId(
+      finalUpiId
+    )
+
+
+    setPaymentQrNote(
+      finalNote
+    )
+
+
+    setDetectedQrData({
+
+      name: '',
+      upiId: '',
+      note: ''
+
+    })
+
+
+    setMessage(
+      'Payment QR and details saved successfully.'
+    )
+
+  }
+
+
+  // ==================================================
+  // SHARE PAYMENT QR
+  // ==================================================
+
+  const handleShareQr = async () => {
+
+    try {
+
+      // ==================================================
+      // ANDROID
+      // ==================================================
+
+      if (
+        Capacitor.isNativePlatform()
+      ) {
+
+        const response =
+          await fetch(
+            paymentQrImage
+          )
+
+
+        const blob =
+          await response.blob()
+
+
+        const reader =
+          new FileReader()
+
+
+        reader.onloadend =
+          async () => {
+
+            try {
+
+              const base64Data =
+                reader.result
+                  .split(',')[1]
+
+
+              const mimeType =
+                blob.type ||
+                'image/png'
+
+
+              const extension =
+                mimeType === 'image/jpeg'
+                  ? 'jpg'
+                  : 'png'
+
+
+              const fileName =
+                `payment-qr.${extension}`
+
+
+              await Filesystem.writeFile({
+
+                path:
+                  fileName,
+
+                data:
+                  base64Data,
+
+                directory:
+                  Directory.Cache
+
+              })
+
+
+              const fileUri =
+                await Filesystem.getUri({
+
+                  path:
+                    fileName,
+
+                  directory:
+                    Directory.Cache
+
+                })
+
+
+              await Share.share({
+
+                title:
+                  'Payment QR',
+
+                text:
+                  'Payment QR Code',
+
+                files:
+                  [
+                    fileUri.uri
+                  ],
+
+                dialogTitle:
+                  'Share Payment QR'
+
+              })
+
+            } catch (error) {
+
+              console.error(
+                'QR sharing failed:',
+                error
+              )
+
+            }
+
+          }
+
+
+        reader.readAsDataURL(
+          blob
+        )
+
+
+        return
+
+      }
+
+
+      // ==================================================
+      // BROWSER
+      // ==================================================
+
+      if (
+        navigator.share
+      ) {
+
+        const response =
+          await fetch(
+            paymentQrImage
+          )
+
+
+        const blob =
+          await response.blob()
+
+
+        const file =
+          new File(
+            [blob],
+            'payment-qr.png',
+            {
+              type:
+                blob.type ||
+                'image/png'
+            }
+          )
+
+
+        // ------------------------------------------
+        // File sharing
+        // ------------------------------------------
+
+        if (
+          navigator.canShare &&
+          navigator.canShare({
+            files: [file]
+          })
+        ) {
+
+          await navigator.share({
+
+            title:
+              'Payment QR',
+
+            text:
+              'Payment QR Code',
+
+            files:
+              [file]
+
+          })
+
+
+          return
+
+        }
+
+
+        // ------------------------------------------
+        // Text-only browser sharing
+        // ------------------------------------------
+
+        await navigator.share({
+
+          title:
+            'Payment QR',
+
+          text:
+            'Scan this QR code to make a payment.'
+
+        })
+
+
+        return
+
+      }
+
+
+      // ==================================================
+      // NOT SUPPORTED
+      // ==================================================
+
+      alert(
+        'Sharing is not supported on this device.'
+      )
+
+    } catch (error) {
+
+      console.error(
+        'QR sharing failed:',
+        error
+      )
+
+    }
+
+  }
 
 
   // ==================================================
@@ -698,6 +1266,10 @@ const Settings = () => {
       </p>
 
 
+      {/* ==================================================
+          DATA MANAGEMENT
+          ================================================== */}
+
       <div className="settings-section">
 
         <h2>
@@ -705,7 +1277,7 @@ const Settings = () => {
         </h2>
 
 
-        {/* Hidden file picker */}
+        {/* Hidden backup/import file picker */}
 
         <input
           ref={fileInputRef}
@@ -740,13 +1312,17 @@ const Settings = () => {
                 💾
               </span>
 
+
               <span className="data-button-text">
+
                 {backupLoading
                   ? 'Creating Backup...'
                   : 'Backup'}
+
               </span>
 
             </button>
+
 
             <p className="data-description">
               Creates a backup of your current HMS data
@@ -754,7 +1330,6 @@ const Settings = () => {
             </p>
 
           </div>
-
 
 
           {/* =====================================
@@ -776,13 +1351,17 @@ const Settings = () => {
                 ♻️
               </span>
 
+
               <span className="data-button-text">
+
                 {restoreLoading
                   ? 'Restoring...'
                   : 'Restore'}
+
               </span>
 
             </button>
+
 
             <p className="data-description">
               Restores your HMS data from the backup
@@ -790,7 +1369,6 @@ const Settings = () => {
             </p>
 
           </div>
-
 
 
           {/* =====================================
@@ -814,13 +1392,17 @@ const Settings = () => {
                   📤
                 </span>
 
+
                 <span className="data-button-text">
+
                   {backupLoading
                     ? 'Preparing Export...'
                     : 'Export Data'}
+
                 </span>
 
               </button>
+
 
               <p className="data-description">
                 Exports your HMS data as a backup file
@@ -831,7 +1413,6 @@ const Settings = () => {
             </div>
 
           )}
-
 
 
           {/* =====================================
@@ -855,13 +1436,17 @@ const Settings = () => {
                   📥
                 </span>
 
+
                 <span className="data-button-text">
+
                   {restoreLoading
                     ? 'Importing...'
                     : 'Import & Restore Backup'}
+
                 </span>
 
               </button>
+
 
               <p className="data-description">
                 Imports a backup from your desired
@@ -872,13 +1457,12 @@ const Settings = () => {
 
           )}
 
-
         </div>
 
 
-        {/* =====================================
+        {/* ==================================================
             MESSAGE
-        ====================================== */}
+            ================================================== */}
 
         {message && (
 
@@ -887,6 +1471,196 @@ const Settings = () => {
           </p>
 
         )}
+
+      </div>
+
+
+      {/* ==================================================
+          PAYMENT QR
+          ================================================== */}
+
+      <div className="settings-section payment-qr-section">
+
+        <h2>
+          Payment QR
+        </h2>
+
+
+        <div className="payment-qr-container">
+
+
+          {/* ==================================================
+              QR IMAGE
+              ================================================== */}
+
+          <img
+            src={paymentQrImage}
+            alt="Payment QR"
+            className="payment-qr-image"
+          />
+
+
+          {/* ==================================================
+              QR FILE PICKER
+              ================================================== */}
+
+          <input
+            ref={paymentQrInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/jpg"
+            style={{
+              display: 'none'
+            }}
+            onChange={handleReplaceQr}
+          />
+
+
+          {/* ==================================================
+              PAYMENT DETAILS FORM
+              ================================================== */}
+
+          <div className="payment-qr-details-form">
+
+            <p className="payment-qr-form-help">
+              Payment details are optional. If you leave
+              a field blank, HMS will use that information
+              from the QR code when available.
+            </p>
+
+
+            {/* =====================================
+                NAME
+            ====================================== */}
+
+            <div className="payment-qr-field">
+
+              <label>
+                Name
+              </label>
+
+
+              <input
+                type="text"
+                value={paymentQrName}
+                onChange={(event) =>
+                  setPaymentQrName(
+                    event.target.value
+                  )
+                }
+                placeholder={
+                  detectedQrData.name ||
+                  'Enter name (optional)'
+                }
+              />
+
+            </div>
+
+
+            {/* =====================================
+                UPI ID
+            ====================================== */}
+
+            <div className="payment-qr-field">
+
+              <label>
+                UPI ID
+              </label>
+
+
+              <input
+                type="text"
+                value={paymentQrUpiId}
+                onChange={(event) =>
+                  setPaymentQrUpiId(
+                    event.target.value
+                  )
+                }
+                placeholder={
+                  detectedQrData.upiId ||
+                  'Enter UPI ID (optional)'
+                }
+              />
+
+            </div>
+
+
+            {/* =====================================
+                PAYMENT NOTE
+            ====================================== */}
+
+            <div className="payment-qr-field">
+
+              <label>
+                Payment Note
+              </label>
+
+
+              <input
+                type="text"
+                value={paymentQrNote}
+                onChange={(event) =>
+                  setPaymentQrNote(
+                    event.target.value
+                  )
+                }
+                placeholder={
+                  detectedQrData.note ||
+                  'Enter payment note (optional)'
+                }
+              />
+
+            </div>
+
+          </div>
+
+
+          {/* ==================================================
+              PAYMENT QR BUTTONS
+              ================================================== */}
+
+          <div className="payment-qr-buttons">
+
+
+            {/* SHARE */}
+
+            <button
+              className="share-qr-button"
+              onClick={handleShareQr}
+            >
+              📤 Share QR
+            </button>
+
+
+            {/* REPLACE */}
+
+            <button
+              className="replace-qr-button"
+              onClick={() =>
+                paymentQrInputRef.current?.click()
+              }
+              disabled={qrReading}
+            >
+
+              {qrReading
+                ? '🔍 Reading QR...'
+                : '🔄 Replace QR'}
+
+            </button>
+
+
+            {/* SAVE */}
+
+            <button
+              className="save-qr-button"
+              onClick={handleSavePaymentQr}
+              disabled={qrReading}
+            >
+              💾 Save QR Details
+            </button>
+
+          </div>
+
+        </div>
 
       </div>
 

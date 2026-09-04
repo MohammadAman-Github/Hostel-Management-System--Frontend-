@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useAndroidBack } from '../context/useAndroidBack'
 import { useNavigate } from 'react-router-dom'
 import { createPortal } from 'react-dom'
 import MonthlyRentViewModal from '../components/MonthlyRentViewModal'
@@ -25,6 +26,9 @@ import {
 const Monthly_Rent_Details = () => {
 
   const navigate = useNavigate()
+  const {
+    registerBackHandler
+  } = useAndroidBack()
   
   const [searchType, setSearchType] = useState('month-year')
 
@@ -141,6 +145,35 @@ useEffect(() => {
   const [viewRent, setViewRent] =
     useState(null)
 
+
+    // =========================
+  // Android Back Handler
+  // =========================
+
+  useEffect(() => {
+
+    registerBackHandler(() => {
+
+      // View popup is open
+      if (viewRent) {
+
+        setViewRent(null)
+
+        return true
+      }
+
+      // No popup is open
+      // Let App.jsx handle page navigation
+      return false
+
+    })
+
+  }, [
+    viewRent,
+    registerBackHandler
+  ])
+
+
   // =========================
   // Edit MRD
   // =========================
@@ -153,6 +186,7 @@ useEffect(() => {
 
   const [editPaymentStatus, setEditPaymentStatus] =
     useState('Pending')
+
 
   // =========================
   // Get Rooms + Students
@@ -1347,6 +1381,71 @@ const handleDeleteMRD = () => {
     }
   </span>
 </button>
+
+{/* TOTAL PAID AMOUNT */}
+
+<div className="monthly-rent-amount-card">
+
+  <span className="monthly-rent-amount-icon">
+    💳
+  </span>
+
+  <span className="monthly-rent-amount-title">
+    Total Paid Amount
+  </span>
+
+  <span className="monthly-rent-amount-value">
+    ₹
+    {
+      rentDetails.reduce(
+        (total, rent) =>
+          total + Number(rent.totalRentPaid ?? 0),
+        0
+      )
+    }
+  </span>
+
+</div>
+
+
+{/* TOTAL PENDING AMOUNT */}
+
+<div className="monthly-rent-amount-card">
+
+  <span className="monthly-rent-amount-icon">
+    🕐
+  </span>
+
+  <span className="monthly-rent-amount-title">
+    Total Pending Amount
+  </span>
+
+  <span className="monthly-rent-amount-value">
+    ₹
+    {
+      rentDetails.reduce(
+        (total, rent) => {
+
+          const totalRent =
+            Number(rent.totalRent ?? 0)
+
+          const totalRentPaid =
+            Number(rent.totalRentPaid ?? 0)
+
+          const pending =
+            Math.max(
+              totalRent - totalRentPaid,
+              0
+            )
+
+          return total + pending
+        },
+        0
+      )
+    }
+  </span>
+
+</div>
 
 </div>
 

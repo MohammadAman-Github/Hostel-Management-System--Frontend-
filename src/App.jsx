@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 
-
 import {
   BrowserRouter,
   Routes,
@@ -8,22 +7,25 @@ import {
   useLocation,
   useNavigate
 } from 'react-router-dom'
+
 import { initDatabase } from './database/database'
 
 import { Capacitor } from '@capacitor/core'
 import { App as CapacitorApp } from '@capacitor/app'
 
 import Sidebar from './components/Sidebar'
+
 import Dashboard from './pages/Dashboard'
 import Students from './pages/Students'
 import Room_Details from './pages/Room_Details'
 import Monthly_Rent_Details from './pages/Monthly_Rent_Details'
 import MonthlyRentStatus from './pages/MonthlyRentStatus'
+import OccupancyRooms from './pages/OccupancyRooms'
+import PaymentQR from './pages/PaymentQR'
 import Settings from './pages/Settings'
 
 import { AndroidBackProvider } from './context/AndroidBackContext'
 import { useAndroidBack } from './context/useAndroidBack'
-import OccupancyRooms from './pages/OccupancyRooms'
 
 
 // ==================================================
@@ -32,7 +34,9 @@ import OccupancyRooms from './pages/OccupancyRooms'
 
 function ScrollToTop() {
 
-  const { pathname } = useLocation()
+  const { pathname } =
+    useLocation()
+
 
   useEffect(() => {
 
@@ -44,6 +48,7 @@ function ScrollToTop() {
 
   }, [pathname])
 
+
   return null
 }
 
@@ -54,16 +59,26 @@ function ScrollToTop() {
 
 function AppLayout() {
 
-  const location = useLocation()
-  const navigate = useNavigate()
+  const location =
+    useLocation()
+
+
+  const navigate =
+    useNavigate()
+
 
   const {
     handleAndroidBack
   } = useAndroidBack()
 
+
   const isAndroidApp =
     Capacitor.getPlatform() === 'android'
 
+
+  // ==================================================
+  // ANDROID BACK BUTTON
+  // ==================================================
 
   useEffect(() => {
 
@@ -71,80 +86,147 @@ function AppLayout() {
       return
     }
 
-    const listener = CapacitorApp.addListener(
-      'backButton',
-      () => {
 
-        // --------------------------------
-        // 1. Popup is open
-        // --------------------------------
+    const listener =
+      CapacitorApp.addListener(
+        'backButton',
+        () => {
 
-        const popupWasClosed =
-          handleAndroidBack()
+          // ==========================================
+          // 1. POPUP IS OPEN
+          // ==========================================
 
-        if (popupWasClosed) {
-          return
+          const popupWasClosed =
+            handleAndroidBack()
+
+
+          if (popupWasClosed) {
+            return
+          }
+
+
+          // ==========================================
+          // 2. PAGE IS OPEN
+          // ==========================================
+
+          if (
+            location.pathname !== '/'
+          ) {
+
+
+            // ========================================
+            // MONTHLY RENT STATUS PAGES
+            // ========================================
+
+            if (
+              location.pathname ===
+                '/monthly-rent/paid' ||
+
+              location.pathname ===
+                '/monthly-rent/partially-paid' ||
+
+              location.pathname ===
+                '/monthly-rent/pending'
+            ) {
+
+              navigate(
+                '/monthly-rent'
+              )
+
+              return
+
+            }
+
+
+            // ========================================
+            // ROOM OCCUPANCY PAGES
+            // ========================================
+
+            if (
+              location.pathname ===
+                '/rooms/single-occupancy' ||
+
+              location.pathname ===
+                '/rooms/double-occupancy' ||
+
+              location.pathname ===
+                '/rooms/triple-occupancy' ||
+
+              location.pathname ===
+                '/rooms/vacant'
+            ) {
+
+              navigate(
+                '/rooms'
+              )
+
+              return
+
+            }
+
+
+            // ========================================
+            // PAYMENT QR PAGE
+            // ========================================
+
+            if (
+              location.pathname ===
+                '/payment-qr'
+            ) {
+
+              navigate(
+                '/'
+              )
+
+              return
+
+            }
+
+
+            // ========================================
+            // SETTINGS PAGE
+            // ========================================
+
+            if (
+              location.pathname ===
+                '/settings'
+            ) {
+
+              navigate(
+                '/'
+              )
+
+              return
+
+            }
+
+
+            // ========================================
+            // OTHER PAGES
+            // ========================================
+
+            navigate('/')
+
+            return
+
+          }
+
+
+          // ==========================================
+          // 3. ALREADY ON DASHBOARD
+          // ==========================================
+
+          CapacitorApp.minimizeApp()
+
         }
+      )
 
-
-      // --------------------------------
-// 2. Page is open
-// --------------------------------
-
-if (location.pathname !== '/') {
-
-// --------------------------------
-// Monthly Rent child/status pages
-// --------------------------------
-
-if (
-  location.pathname === '/monthly-rent/paid' ||
-  location.pathname === '/monthly-rent/partially-paid' ||
-  location.pathname === '/monthly-rent/pending'
-) {
-
-  navigate('/monthly-rent')
-
-  return
-}
-
-
-// --------------------------------
-// Room Occupancy pages
-// --------------------------------
-
-if (
-  location.pathname === '/rooms/single-occupancy' ||
-  location.pathname === '/rooms/double-occupancy' ||
-  location.pathname === '/rooms/triple-occupancy' ||
-  location.pathname === '/rooms/vacant'
-) {
-
-  navigate('/rooms')
-
-  return
-}
-
-  // Other pages
-  navigate('/')
-
-  return
-}
-
-
-        // --------------------------------
-        // 3. Already on Dashboard
-        // --------------------------------
-
-        CapacitorApp.minimizeApp()
-
-      }
-    )
 
     return () => {
 
       listener.then(
-        handle => handle.remove()
+        handle =>
+          handle.remove()
       )
 
     }
@@ -157,86 +239,187 @@ if (
   ])
 
 
+  // ==================================================
+  // SIDEBAR VISIBILITY
+  // ==================================================
+  //
+  // Browser:
+  // Sidebar is always visible.
+  //
   // Android:
-  // Sidebar only on Dashboard
+  // Sidebar is visible on:
+  // Dashboard
+  // Payment QR
+  // Settings
+  //
+  // Other Android pages use no sidebar.
+  // ==================================================
 
   const showSidebar =
-    !isAndroidApp ||
-    location.pathname === '/'
+  !isAndroidApp ||
+  location.pathname === '/'
 
+
+  // ==================================================
+  // UI
+  // ==================================================
 
   return (
 
     <div
       className={`app-layout ${
-        showSidebar ? '' : 'no-sidebar'
+        showSidebar
+          ? ''
+          : 'no-sidebar'
       }`}
     >
 
-      {showSidebar && <Sidebar />}
+      {/* ============================================
+          SIDEBAR
+          ============================================ */}
+
+      {showSidebar && (
+        <Sidebar />
+      )}
+
+
+      {/* ============================================
+          MAIN CONTENT
+          ============================================ */}
 
       <main className="main-content">
 
         <Routes>
 
+
+          {/* ==========================================
+              DASHBOARD
+              ========================================== */}
+
           <Route
             path="/"
-            element={<Dashboard />}
+            element={
+              <Dashboard />
+            }
           />
+
+
+          {/* ==========================================
+              STUDENTS
+              ========================================== */}
 
           <Route
             path="/students"
-            element={<Students />}
+            element={
+              <Students />
+            }
+          />
+
+
+          {/* ==========================================
+              ROOMS
+              ========================================== */}
+
+          <Route
+            path="/rooms"
+            element={
+              <Room_Details />
+            }
+          />
+
+
+          {/* ==========================================
+              ROOM OCCUPANCY
+              ========================================== */}
+
+          <Route
+            path="/rooms/single-occupancy"
+            element={
+              <OccupancyRooms />
+            }
           />
 
           <Route
-  path="/rooms"
-  element={<Room_Details />}
-/>
+            path="/rooms/double-occupancy"
+            element={
+              <OccupancyRooms />
+            }
+          />
 
-<Route
-  path="/rooms/single-occupancy"
-  element={<OccupancyRooms />}
-/>
+          <Route
+            path="/rooms/triple-occupancy"
+            element={
+              <OccupancyRooms />
+            }
+          />
 
-<Route
-  path="/rooms/double-occupancy"
-  element={<OccupancyRooms />}
-/>
+          <Route
+            path="/rooms/vacant"
+            element={
+              <OccupancyRooms />
+            }
+          />
 
-<Route
-  path="/rooms/triple-occupancy"
-  element={<OccupancyRooms />}
-/>
 
-<Route
-  path="/rooms/vacant"
-  element={<OccupancyRooms />}
-/>
+          {/* ==========================================
+              MONTHLY RENT
+              ========================================== */}
 
           <Route
             path="/monthly-rent"
-            element={<Monthly_Rent_Details />}
+            element={
+              <Monthly_Rent_Details />
+            }
+          />
+
+
+          {/* ==========================================
+              MONTHLY RENT STATUS
+              ========================================== */}
+
+          <Route
+            path="/monthly-rent/paid"
+            element={
+              <MonthlyRentStatus />
+            }
           />
 
           <Route
-  path="/monthly-rent/paid"
-  element={<MonthlyRentStatus />}
-/>
+            path="/monthly-rent/partially-paid"
+            element={
+              <MonthlyRentStatus />
+            }
+          />
 
-<Route
-  path="/monthly-rent/partially-paid"
-  element={<MonthlyRentStatus />}
-/>
+          <Route
+            path="/monthly-rent/pending"
+            element={
+              <MonthlyRentStatus />
+            }
+          />
 
-<Route
-  path="/monthly-rent/pending"
-  element={<MonthlyRentStatus />}
-/>
+
+          {/* ==========================================
+              PAYMENT QR
+              ========================================== */}
+
+          <Route
+            path="/payment-qr"
+            element={
+              <PaymentQR />
+            }
+          />
+
+
+          {/* ==========================================
+              SETTINGS
+              ========================================== */}
 
           <Route
             path="/settings"
-            element={<Settings />}
+            element={
+              <Settings />
+            }
           />
 
         </Routes>
@@ -246,6 +429,7 @@ if (
     </div>
 
   )
+
 }
 
 
@@ -255,49 +439,63 @@ if (
 
 function App() {
 
-  const [databaseReady, setDatabaseReady] = useState(false)
+  const [
+    databaseReady,
+    setDatabaseReady
+  ] = useState(false)
+
+
+  // ==================================================
+  // INITIALIZE DATABASE
+  // ==================================================
 
   useEffect(() => {
 
-    const initializeApp = async () => {
+    const initializeApp =
+      async () => {
 
-      try {
+        try {
 
-        console.log(
-          'APP: Initializing SQLite database...'
-        )
+          console.log(
+            'APP: Initializing SQLite database...'
+          )
 
-        await initDatabase()
 
-        console.log(
-          'APP: SQLite database ready'
-        )
+          await initDatabase()
 
-        setDatabaseReady(true)
 
-      } catch (error) {
+          console.log(
+            'APP: SQLite database ready'
+          )
 
-        console.error(
-          'APP: SQLite initialization failed:',
-          error
-        )
+
+          setDatabaseReady(true)
+
+        } catch (error) {
+
+          console.error(
+            'APP: SQLite initialization failed:',
+            error
+          )
+
+        }
 
       }
 
-    }
 
     initializeApp()
 
   }, [])
 
 
-  // ------------------------------------------
-  // Wait for SQLite before loading application
-  // ------------------------------------------
+  // ==================================================
+  // WAIT FOR DATABASE
+  // ==================================================
 
   if (!databaseReady) {
 
     return (
+
       <div
         style={{
           minHeight: '100vh',
@@ -307,12 +505,19 @@ function App() {
           fontSize: '18px'
         }}
       >
+
         Loading...
+
       </div>
+
     )
 
   }
 
+
+  // ==================================================
+  // APPLICATION
+  // ==================================================
 
   return (
 
@@ -329,6 +534,7 @@ function App() {
     </BrowserRouter>
 
   )
+
 }
 
 

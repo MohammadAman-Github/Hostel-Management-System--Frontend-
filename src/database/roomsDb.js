@@ -202,13 +202,92 @@ export const deleteRoomInDb = async (roomNo) => {
 
   const db = getDatabase()
 
+  const roomNumber = Number(roomNo)
+
+
+  // =========================
+  // CHECK ROOM EXISTS
+  // =========================
+
+  const roomResult = await db.query(
+    `
+    SELECT room_no
+    FROM room_details
+    WHERE room_no = ?
+    `,
+    [roomNumber]
+  )
+
+  if (!roomResult.values?.length) {
+    throw new Error(
+      `Room ${roomNumber} does not exist.`
+    )
+  }
+
+
+  // =========================
+  // CHECK ACTIVE STUDENTS
+  // =========================
+
+  const studentResult = await db.query(
+    `
+    SELECT COUNT(*) AS activeStudents
+    FROM students
+    WHERE room_no = ?
+      AND status = 'ACTIVE'
+    `,
+    [roomNumber]
+  )
+
+  const activeStudents =
+    Number(
+      studentResult.values?.[0]?.activeStudents
+    ) || 0
+
+  if (activeStudents > 0) {
+    throw new Error(
+      `Room ${roomNumber} cannot be deleted because ${activeStudents} active student${activeStudents > 1 ? 's are' : ' is'} assigned to this room.`
+    )
+  }
+
+
+  // =========================
+  // CHECK MONTHLY RENT HISTORY
+  // =========================
+
+  const rentResult = await db.query(
+    `
+    SELECT COUNT(*) AS rentRecords
+    FROM monthly_rent_details
+    WHERE room_no = ?
+    `,
+    [roomNumber]
+  )
+
+  const rentRecords =
+    Number(
+      rentResult.values?.[0]?.rentRecords
+    ) || 0
+
+  if (rentRecords > 0) {
+    throw new Error(
+      `Room ${roomNumber} cannot be deleted because monthly rent history exists for this room.`
+    )
+  }
+
+
+  // =========================
+  // DELETE ROOM
+  // =========================
+
   await db.run(
     `
     DELETE FROM room_details
     WHERE room_no = ?
     `,
-    [roomNo]
+    [roomNumber]
   )
+
 
   return true
 }
