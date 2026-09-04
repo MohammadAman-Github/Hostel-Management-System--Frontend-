@@ -40,13 +40,6 @@ const Settings = () => {
         'SETTINGS: Creating database backup...'
       )
 
-      if (!Capacitor.isNativePlatform()) {
-
-        throw new Error(
-          'Backup is currently available only in the Android app.'
-        )
-
-      }
 
       const backup =
         await exportDatabase()
@@ -60,72 +53,123 @@ const Settings = () => {
 
 
       // ------------------------------------------
-      // Create backup directory
+      // ANDROID
       // ------------------------------------------
 
-      try {
+      if (Capacitor.isNativePlatform()) {
 
-        await Filesystem.stat({
-          path: 'hms',
-          directory: Directory.Documents
+        // ------------------------------------------
+        // Create backup directory
+        // ------------------------------------------
+
+        try {
+
+          await Filesystem.stat({
+            path: 'hms',
+            directory: Directory.Documents
+          })
+
+          console.log(
+            'SETTINGS: Backup directory already exists'
+          )
+
+        } catch {
+
+          await Filesystem.mkdir({
+            path: 'hms',
+            directory: Directory.Documents
+          })
+
+          console.log(
+            'SETTINGS: Backup directory created'
+          )
+
+        }
+
+
+        // ------------------------------------------
+        // Backup filename
+        // ------------------------------------------
+
+        const fileName =
+          'hms/HMS_Backup.json'
+
+
+        // ------------------------------------------
+        // Save backup
+        // ------------------------------------------
+
+        await Filesystem.writeFile({
+
+          path:
+            fileName,
+
+          data:
+            jsonString,
+
+          directory:
+            Directory.Documents,
+
+          encoding:
+            'utf8'
+
         })
 
-        console.log(
-          'SETTINGS: Backup directory already exists'
-        )
-
-      } catch {
-
-        await Filesystem.mkdir({
-          path: 'hms',
-          directory: Directory.Documents
-        })
 
         console.log(
-          'SETTINGS: Backup directory created'
+          'SETTINGS: Backup saved:',
+          fileName
         )
+
+
+        setMessage(
+          'Backup created successfully.'
+        )
+
+        return
 
       }
 
 
       // ------------------------------------------
-      // Backup filename
+      // BROWSER
+      // Same behavior as Export Data
       // ------------------------------------------
 
-      const fileName =
-        'hms/HMS_Backup.json'
+      const blob =
+        new Blob(
+          [jsonString],
+          {
+            type:
+              'application/json'
+          }
+        )
 
+      const url =
+        URL.createObjectURL(blob)
 
-      // ------------------------------------------
-      // Save backup
-      // ------------------------------------------
+      const link =
+        document.createElement('a')
 
-      await Filesystem.writeFile({
+      link.href =
+        url
 
-        path:
-          fileName,
+      link.download =
+        'HMS_Backup.json'
 
-        data:
-          jsonString,
+      document.body.appendChild(link)
 
-        directory:
-          Directory.Documents,
+      link.click()
 
-        encoding:
-          'utf8'
+      document.body.removeChild(link)
 
-      })
-
-
-      console.log(
-        'SETTINGS: Backup saved:',
-        fileName
-      )
+      URL.revokeObjectURL(url)
 
 
       setMessage(
         'Backup created successfully.'
       )
+
 
     } catch (error) {
 
@@ -345,56 +389,76 @@ const Settings = () => {
       setMessage('')
 
 
-      if (!Capacitor.isNativePlatform()) {
+      // ------------------------------------------
+      // ANDROID
+      // ------------------------------------------
 
-        throw new Error(
-          'Restore is currently available only in the Android app.'
+      if (Capacitor.isNativePlatform()) {
+
+        // ------------------------------------------
+        // Read automatic backup
+        // ------------------------------------------
+
+        const backupFile =
+          await Filesystem.readFile({
+
+            path:
+              'hms/HMS_Backup.json',
+
+            directory:
+              Directory.Documents,
+
+            encoding:
+              'utf8'
+
+          })
+
+
+        // ------------------------------------------
+        // Parse backup
+        // ------------------------------------------
+
+        const backupData =
+          JSON.parse(
+            backupFile.data
+          )
+
+
+        // ------------------------------------------
+        // Confirm restore
+        // ------------------------------------------
+
+        const confirmed =
+          window.confirm(
+            'Restore the HMS backup?\n\n' +
+            'This will replace all current HMS data.'
+          )
+
+
+        if (!confirmed) {
+
+          return
+
+        }
+
+
+        // ------------------------------------------
+        // Restore database
+        // ------------------------------------------
+
+        console.log(
+          'SETTINGS: Restoring automatic backup...'
         )
 
-      }
 
-
-      // ------------------------------------------
-      // Read automatic backup
-      // ------------------------------------------
-
-      const backupFile =
-        await Filesystem.readFile({
-
-          path:
-            'hms/HMS_Backup.json',
-
-          directory:
-            Directory.Documents,
-
-          encoding:
-            'utf8'
-
-        })
-
-
-      // ------------------------------------------
-      // Parse backup
-      // ------------------------------------------
-
-      const backupData =
-        JSON.parse(
-          backupFile.data
+        await importDatabase(
+          backupData
         )
 
 
-      // ------------------------------------------
-      // Confirm restore
-      // ------------------------------------------
-
-      const confirmed =
-        window.confirm(
-          'Restore the HMS backup?\n\n' +
-          'This will replace all current HMS data.'
+        setMessage(
+          'Database restored successfully. Please reopen the page.'
         )
-
-
-      if (!confirmed) {
 
         return
 
@@ -402,22 +466,16 @@ const Settings = () => {
 
 
       // ------------------------------------------
-      // Restore database
+      // BROWSER
+      // Same behavior as Import & Restore
       // ------------------------------------------
 
       console.log(
-        'SETTINGS: Restoring automatic backup...'
+        'SETTINGS: Opening backup file picker...'
       )
 
+      fileInputRef.current?.click()
 
-      await importDatabase(
-        backupData
-      )
-
-
-      setMessage(
-        'Database restored successfully. Please reopen the page.'
-      )
 
     } catch (error) {
 
@@ -739,36 +797,40 @@ const Settings = () => {
               EXPORT
           ====================================== */}
 
-          <div className="settings-option">
+          {Capacitor.isNativePlatform() && (
 
-            <button
-              className="data-button export-button"
-              onClick={handleExportBackup}
-              disabled={
-                backupLoading ||
-                restoreLoading
-              }
-            >
+            <div className="settings-option">
 
-              <span className="data-button-icon">
-                📤
-              </span>
+              <button
+                className="data-button export-button"
+                onClick={handleExportBackup}
+                disabled={
+                  backupLoading ||
+                  restoreLoading
+                }
+              >
 
-              <span className="data-button-text">
-                {backupLoading
-                  ? 'Preparing Export...'
-                  : 'Export Data'}
-              </span>
+                <span className="data-button-icon">
+                  📤
+                </span>
 
-            </button>
+                <span className="data-button-text">
+                  {backupLoading
+                    ? 'Preparing Export...'
+                    : 'Export Data'}
+                </span>
 
-            <p className="data-description">
-              Exports your HMS data as a backup file
-              so you can save or share it to your
-              desired location.
-            </p>
+              </button>
 
-          </div>
+              <p className="data-description">
+                Exports your HMS data as a backup file
+                so you can save or share it to your
+                desired location.
+              </p>
+
+            </div>
+
+          )}
 
 
 
@@ -776,35 +838,39 @@ const Settings = () => {
               IMPORT & RESTORE
           ====================================== */}
 
-          <div className="settings-option">
+          {Capacitor.isNativePlatform() && (
 
-            <button
-              className="data-button import-button"
-              onClick={handleImport}
-              disabled={
-                backupLoading ||
-                restoreLoading
-              }
-            >
+            <div className="settings-option">
 
-              <span className="data-button-icon">
-                📥
-              </span>
+              <button
+                className="data-button import-button"
+                onClick={handleImport}
+                disabled={
+                  backupLoading ||
+                  restoreLoading
+                }
+              >
 
-              <span className="data-button-text">
-                {restoreLoading
-                  ? 'Importing...'
-                  : 'Import & Restore Backup'}
-              </span>
+                <span className="data-button-icon">
+                  📥
+                </span>
 
-            </button>
+                <span className="data-button-text">
+                  {restoreLoading
+                    ? 'Importing...'
+                    : 'Import & Restore Backup'}
+                </span>
 
-            <p className="data-description">
-              Imports a backup from your desired
-              location and restores the data to HMS.
-            </p>
+              </button>
 
-          </div>
+              <p className="data-description">
+                Imports a backup from your desired
+                location and restores the data to HMS.
+              </p>
+
+            </div>
+
+          )}
 
 
         </div>

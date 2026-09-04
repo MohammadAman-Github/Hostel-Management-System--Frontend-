@@ -118,18 +118,23 @@ useEffect(() => {
 }, [])
 
 
-  // Calculate room occupancy
-  const occupiedRooms = rooms.filter(
-    room => room.occupancyStatus === "OCCUPIED"
-  ).length
+// Calculate room occupancy
 
-  const partiallyOccupiedRooms = rooms.filter(
-    room => room.occupancyStatus === "PARTIALLY OCCUPIED"
-  ).length
+const singleOccupancyRooms = rooms.filter(
+  room => room.occupancyStatus === "SINGLE OCCUPANCY"
+).length
 
-  const vacantRooms = rooms.filter(
-    room => room.occupancyStatus === "VACANT"
-  ).length
+const doubleOccupancyRooms = rooms.filter(
+  room => room.occupancyStatus === "DOUBLE OCCUPANCY"
+).length
+
+const tripleOccupancyRooms = rooms.filter(
+  room => room.occupancyStatus === "TRIPLE OCCUPANCY"
+).length
+
+const vacantRooms = rooms.filter(
+  room => room.occupancyStatus === "VACANT"
+).length
 
 
   // Search rooms
@@ -517,7 +522,7 @@ const handleDeleteRoom = () => {
   className="room-summary"
   style={{
     display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
+    gridTemplateColumns: "repeat(5, 1fr)",
     gap: "15px",
     width: "100%",
     marginBottom: "25px"
@@ -545,7 +550,7 @@ const handleDeleteRoom = () => {
 
   <div
   className="summary-card"
-  onClick={() => navigate('/rooms/occupied')}
+  onClick={() => navigate('/rooms/single-occupancy')}
   style={{
     background: "white",
     padding: "15px 18px",
@@ -554,19 +559,18 @@ const handleDeleteRoom = () => {
     cursor: "pointer"
   }}
 >
-    <h3 style={{ margin: "0 0 6px", fontSize: "16px" }}>
-      Occupied
-    </h3>
+  <h3 style={{ margin: "0 0 6px", fontSize: "16px" }}>
+    Single Occupancy
+  </h3>
 
-    <p style={{ margin: 0, fontSize: "24px", fontWeight: "600" }}>
-      {occupiedRooms}
-    </p>
-  </div>
+  <p style={{ margin: 0, fontSize: "24px", fontWeight: "600" }}>
+    {singleOccupancyRooms}
+  </p>
+</div>
 
-
-  <div
+<div
   className="summary-card"
-  onClick={() => navigate('/rooms/partially-occupied')}
+  onClick={() => navigate('/rooms/double-occupancy')}
   style={{
     background: "white",
     padding: "15px 18px",
@@ -575,17 +579,38 @@ const handleDeleteRoom = () => {
     cursor: "pointer"
   }}
 >
-    <h3 style={{ margin: "0 0 6px", fontSize: "16px" }}>
-      Partially Occupied
-    </h3>
+  <h3 style={{ margin: "0 0 6px", fontSize: "16px" }}>
+    Double Occupancy
+  </h3>
 
-    <p style={{ margin: 0, fontSize: "24px", fontWeight: "600" }}>
-      {partiallyOccupiedRooms}
-    </p>
-  </div>
+  <p style={{ margin: 0, fontSize: "24px", fontWeight: "600" }}>
+    {doubleOccupancyRooms}
+  </p>
+</div>
 
 
-  <div
+<div
+  className="summary-card"
+  onClick={() => navigate('/rooms/triple-occupancy')}
+  style={{
+    background: "white",
+    padding: "15px 18px",
+    borderRadius: "10px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+    cursor: "pointer"
+  }}
+>
+  <h3 style={{ margin: "0 0 6px", fontSize: "16px" }}>
+    Triple Occupancy
+  </h3>
+
+  <p style={{ margin: 0, fontSize: "24px", fontWeight: "600" }}>
+    {tripleOccupancyRooms}
+  </p>
+</div>
+
+
+<div
   className="summary-card"
   onClick={() => navigate('/rooms/vacant')}
   style={{
@@ -596,15 +621,14 @@ const handleDeleteRoom = () => {
     cursor: "pointer"
   }}
 >
-    <h3 style={{ margin: "0 0 6px", fontSize: "16px" }}>
-      Vacant
-    </h3>
+  <h3 style={{ margin: "0 0 6px", fontSize: "16px" }}>
+    Vacant
+  </h3>
 
-    <p style={{ margin: 0, fontSize: "24px", fontWeight: "600" }}>
-      {vacantRooms}
-    </p>
-  </div>
-
+  <p style={{ margin: 0, fontSize: "24px", fontWeight: "600" }}>
+    {vacantRooms}
+  </p>
+</div>
 </div>
 
 

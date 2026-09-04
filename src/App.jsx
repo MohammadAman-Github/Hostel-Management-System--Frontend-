@@ -93,17 +93,37 @@ function AppLayout() {
 
 if (location.pathname !== '/') {
 
-  // Monthly Rent child/status pages
-  if (
-    location.pathname === '/monthly-rent/paid' ||
-    location.pathname === '/monthly-rent/partially-paid' ||
-    location.pathname === '/monthly-rent/pending'
-  ) {
+// --------------------------------
+// Monthly Rent child/status pages
+// --------------------------------
 
-    navigate('/monthly-rent')
+if (
+  location.pathname === '/monthly-rent/paid' ||
+  location.pathname === '/monthly-rent/partially-paid' ||
+  location.pathname === '/monthly-rent/pending'
+) {
 
-    return
-  }
+  navigate('/monthly-rent')
+
+  return
+}
+
+
+// --------------------------------
+// Room Occupancy pages
+// --------------------------------
+
+if (
+  location.pathname === '/rooms/single-occupancy' ||
+  location.pathname === '/rooms/double-occupancy' ||
+  location.pathname === '/rooms/triple-occupancy' ||
+  location.pathname === '/rooms/vacant'
+) {
+
+  navigate('/rooms')
+
+  return
+}
 
   // Other pages
   navigate('/')
@@ -175,12 +195,17 @@ if (location.pathname !== '/') {
 />
 
 <Route
-  path="/rooms/occupied"
+  path="/rooms/single-occupancy"
   element={<OccupancyRooms />}
 />
 
 <Route
-  path="/rooms/partially-occupied"
+  path="/rooms/double-occupancy"
+  element={<OccupancyRooms />}
+/>
+
+<Route
+  path="/rooms/triple-occupancy"
   element={<OccupancyRooms />}
 />
 

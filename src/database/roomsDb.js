@@ -246,12 +246,12 @@ export const updateRoomOccupancyInDb = async (roomNo) => {
 
 
   // =========================
-  // GET TOTAL BEDS
+  // CHECK ROOM EXISTS
   // =========================
 
   const roomResult = await db.query(
     `
-    SELECT beds
+    SELECT room_no
     FROM room_details
     WHERE room_no = ?
     `,
@@ -265,10 +265,6 @@ export const updateRoomOccupancyInDb = async (roomNo) => {
   }
 
 
-  const totalBeds =
-    Number(roomResult.values[0].beds) || 0
-
-
   // =========================
   // DETERMINE OCCUPANCY
   // =========================
@@ -279,13 +275,21 @@ export const updateRoomOccupancyInDb = async (roomNo) => {
 
     occupancyStatus = 'VACANT'
 
-  } else if (activeStudents < totalBeds) {
+  } else if (activeStudents === 1) {
 
-    occupancyStatus = 'PARTIALLY OCCUPIED'
+    occupancyStatus = 'SINGLE OCCUPANCY'
+
+  } else if (activeStudents === 2) {
+
+    occupancyStatus = 'DOUBLE OCCUPANCY'
+
+  } else if (activeStudents === 3) {
+
+    occupancyStatus = 'TRIPLE OCCUPANCY'
 
   } else {
 
-    occupancyStatus = 'OCCUPIED'
+    occupancyStatus = `${activeStudents} OCCUPANCY`
 
   }
 
@@ -311,7 +315,6 @@ export const updateRoomOccupancyInDb = async (roomNo) => {
     `Room ${roomNumber} occupancy updated:`,
     {
       activeStudents,
-      totalBeds,
       occupancyStatus
     }
   )

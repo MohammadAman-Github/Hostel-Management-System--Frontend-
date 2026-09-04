@@ -19,26 +19,39 @@ const OccupancyRooms = () => {
 
 
   // =========================
-  // DETERMINE ROOM STATUS
-  // =========================
+// DETERMINE ROOM STATUS
+// =========================
 
-  let occupancyStatus = ''
-  let pageTitle = ''
+let occupancyStatus = ''
+let pageTitle = ''
 
-  if (location.pathname === '/rooms/occupied') {
-    occupancyStatus = 'OCCUPIED'
-    pageTitle = 'Occupied Rooms'
-  }
+if (location.pathname === '/rooms/single-occupancy') {
 
-  if (location.pathname === '/rooms/partially-occupied') {
-    occupancyStatus = 'PARTIALLY OCCUPIED'
-    pageTitle = 'Partially Occupied Rooms'
-  }
+  occupancyStatus = 'SINGLE OCCUPANCY'
+  pageTitle = 'Single Occupancy Rooms'
 
-  if (location.pathname === '/rooms/vacant') {
-    occupancyStatus = 'VACANT'
-    pageTitle = 'Vacant Rooms'
-  }
+}
+
+if (location.pathname === '/rooms/double-occupancy') {
+
+  occupancyStatus = 'DOUBLE OCCUPANCY'
+  pageTitle = 'Double Occupancy Rooms'
+
+}
+
+if (location.pathname === '/rooms/triple-occupancy') {
+
+  occupancyStatus = 'TRIPLE OCCUPANCY'
+  pageTitle = 'Triple Occupancy Rooms'
+
+}
+
+if (location.pathname === '/rooms/vacant') {
+
+  occupancyStatus = 'VACANT'
+  pageTitle = 'Vacant Rooms'
+
+}
 
 
   // =========================
