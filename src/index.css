@@ -3066,6 +3066,21 @@ body {
   padding: 20px;
 }
 
+.whatsapp-icon-button {
+  border: none;
+  background: transparent;
+  color: #25D366;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.whatsapp-icon-button:hover {
+  opacity: 0.8;
+}
+
 
 /* ==================================================
    RENT DETAILS - 2 COLUMN GRID

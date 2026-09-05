@@ -18,6 +18,7 @@ export const getAllStudentsFromDb = async () => {
       student_id AS studentId,
       student_name AS studentName,
       contact_no AS contactNo,
+      whatsapp_no AS whatsappNo,
       aadhar_no AS aadharNo,
       father_name AS fatherName,
       father_contact AS fatherContact,
@@ -52,6 +53,7 @@ export const getStudentByIdFromDb = async (studentId) => {
       student_id AS studentId,
       student_name AS studentName,
       contact_no AS contactNo,
+      whatsapp_no AS whatsappNo,
       aadhar_no AS aadharNo,
       father_name AS fatherName,
       father_contact AS fatherContact,
@@ -87,6 +89,7 @@ export const createStudentInDb = async (studentData) => {
     INSERT INTO students (
       student_name,
       contact_no,
+      whatsapp_no,
       aadhar_no,
       father_name,
       father_contact,
@@ -99,11 +102,12 @@ export const createStudentInDb = async (studentData) => {
       joining_date,
       status
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       studentData.studentName,
       studentData.contactNo,
+      studentData.whatsappNo,
       studentData.aadharNo,
       studentData.fatherName,
       studentData.fatherContact,
@@ -128,6 +132,7 @@ export const createStudentInDb = async (studentData) => {
       student_id AS studentId,
       student_name AS studentName,
       contact_no AS contactNo,
+      whatsapp_no AS whatsappNo,
       aadhar_no AS aadharNo,
       father_name AS fatherName,
       father_contact AS fatherContact,
@@ -179,6 +184,7 @@ export const updateStudentInDb = async (
     SET
       student_name = ?,
       contact_no = ?,
+      whatsapp_no = ?,
       aadhar_no = ?,
       father_name = ?,
       father_contact = ?,
@@ -194,6 +200,7 @@ export const updateStudentInDb = async (
     [
       studentData.studentName,
       studentData.contactNo,
+      studentData.whatsappNo,
       studentData.aadharNo,
       studentData.fatherName,
       studentData.fatherContact,

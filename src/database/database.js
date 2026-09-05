@@ -40,12 +40,12 @@ export const initDatabase = async () => {
     // ==========================================
 
     db = await sqlite.createConnection(
-      DB_NAME,
-      false,
-      'no-encryption',
-      1,
-      false
-    )
+  DB_NAME,
+  false,
+  'no-encryption',
+  2,
+  false
+)
 
     console.log('SQLite connection created')
 
@@ -97,6 +97,7 @@ export const initDatabase = async () => {
         student_id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_name TEXT NOT NULL,
         contact_no TEXT NOT NULL,
+        whatsapp_no TEXT,
         aadhar_no TEXT NOT NULL,
         father_name TEXT NOT NULL,
         father_contact TEXT NOT NULL,
@@ -113,6 +114,37 @@ export const initDatabase = async () => {
     `)
 
     console.log('STUDENTS TABLE READY')
+
+
+// ==========================================
+// STUDENTS TABLE MIGRATION
+// ==========================================
+
+
+    const studentColumns = await db.query(`
+  PRAGMA table_info(students)
+`)
+
+const hasWhatsappNo =
+  studentColumns.values?.some(
+    column => column.name === 'whatsapp_no'
+  )
+
+if (!hasWhatsappNo) {
+
+  console.log(
+    'MIGRATION: Adding whatsapp_no column to students table'
+  )
+
+  await db.execute(`
+    ALTER TABLE students
+    ADD COLUMN whatsapp_no TEXT
+  `)
+
+  console.log(
+    'MIGRATION: whatsapp_no column added successfully'
+  )
+}
 
 
     // ==========================================

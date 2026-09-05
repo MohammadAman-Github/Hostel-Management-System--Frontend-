@@ -77,6 +77,57 @@ const PhoneIcon = ({ number }) => {
   )
 }
 
+const WhatsAppIcon = ({ number }) => {
+
+  const handleWhatsApp = () => {
+
+    if (!number) {
+      return
+    }
+
+    const cleanNumber =
+      String(number).replace(/\D/g, '')
+
+    const whatsappNumber =
+      cleanNumber.length === 10
+        ? `91${cleanNumber}`
+        : cleanNumber
+
+    const isAndroid =
+      Capacitor.getPlatform() === 'android'
+
+    const whatsappUrl = isAndroid
+      ? `whatsapp://send?phone=${whatsappNumber}`
+      : `https://wa.me/${whatsappNumber}`
+
+    window.location.href = whatsappUrl
+  }
+
+  return (
+    <span
+      className="student-whatsapp-btn"
+      onClick={handleWhatsApp}
+      role="button"
+      style={{
+        cursor: 'pointer'
+      }}
+      title="Open WhatsApp"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.5 0 .16 5.34.16 11.9c0 2.1.55 4.15 1.6 5.96L.05 24l6.28-1.65a11.9 11.9 0 0 0 5.73 1.46h.01c6.56 0 11.9-5.34 11.9-11.9 0-3.18-1.24-6.17-3.45-8.43ZM12.07 21.82h-.01a9.88 9.88 0 0 1-5.04-1.38l-.36-.21-3.73.98.99-3.64-.23-.37a9.86 9.86 0 0 1-1.51-5.3c0-5.48 4.46-9.94 9.95-9.94 2.65 0 5.14 1.03 7.01 2.91a9.87 9.87 0 0 1 2.91 7.03c0 5.47-4.46 9.92-9.94 9.92Zm5.45-7.43c-.3-.15-1.78-.88-2.06-.98-.28-.1-.48-.15-.68.15-.2.3-.78.98-.95 1.18-.17.2-.35.23-.65.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.48-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.53.15-.18.2-.3.3-.5.1-.2.05-.38-.03-.53-.08-.15-.68-1.64-.93-2.25-.25-.59-.5-.51-.68-.52h-.58c-.2 0-.53.08-.81.38-.28.3-1.06 1.04-1.06 2.54 0 1.5 1.09 2.95 1.24 3.15.15.2 2.14 3.27 5.18 4.59.72.31 1.29.5 1.73.64.73.23 1.4.2 1.93.12.59-.09 1.78-.73 2.03-1.43.25-.7.25-1.3.18-1.43-.08-.13-.28-.2-.58-.35Z"
+        />
+      </svg>
+    </span>
+  )
+}
+
 const Students = () => {
 
 
@@ -107,6 +158,7 @@ const Students = () => {
     studentName: '',
     roomNo: '',
     contactNo: '',
+    whatsappNo: '',
     aadharNo: '',
     fatherName: '',
     fatherContact: '',
@@ -415,6 +467,14 @@ useEffect(() => {
 
 
     if (
+      name === 'whatsappNo' &&
+      (value === '' || /^\d{10}$/.test(value))
+    ) {
+      delete newErrors.whatsappNo
+    }
+
+
+    if (
       name === 'aadharNo' &&
       /^\d{12}$/.test(value)
     ) {
@@ -521,6 +581,17 @@ useEffect(() => {
     }
 
 
+    if (
+      studentForm.whatsappNo &&
+      !/^\d{10}$/.test(
+        studentForm.whatsappNo
+      )
+    ) {
+      newErrors.whatsappNo =
+        'WhatsApp number must contain 10 digits.'
+    }
+
+
     if (!studentForm.aadharNo) {
 
       newErrors.aadharNo =
@@ -622,6 +693,7 @@ useEffect(() => {
       studentName: '',
       roomNo: '',
       contactNo: '',
+      whatsappNo: '',
       aadharNo: '',
       fatherName: '',
       fatherContact: '',
@@ -1252,6 +1324,9 @@ useEffect(() => {
 
       contactNo:
         student.contactNo || '',
+
+      whatsappNo:
+        student.whatsappNo || '',
 
       aadharNo:
         student.aadharNo || '',
@@ -1898,6 +1973,27 @@ useEffect(() => {
                 </div>
 
 
+                {/* WHATSAPP */}
+
+<div>
+
+  <label>
+    WhatsApp No
+  </label>
+
+  <input
+    type="text"
+    name="whatsappNo"
+    value={
+      studentForm.whatsappNo
+    }
+    onChange={handleChange}
+    placeholder="Enter 10-digit WhatsApp number"
+  />
+
+</div>
+
+
                 {/* AADHAAR */}
 
                 <div>
@@ -2369,6 +2465,28 @@ useEffect(() => {
 
   </div>
 </div>
+
+
+                <div>
+                  <strong>
+                    WhatsApp
+                  </strong>
+
+                  <div className="student-contact-row">
+
+                    <p>
+                      {selectedStudent.whatsappNo ||
+                        'Not provided'}
+                    </p>
+
+                    {selectedStudent.whatsappNo && (
+                      <WhatsAppIcon
+                        number={selectedStudent.whatsappNo}
+                      />
+                    )}
+
+                  </div>
+                </div>
 
 
                 <div>

@@ -5,6 +5,8 @@ import { getStudents } from '../services/studentService'
 
 
 
+
+
 // ==================================================
 // PHONE ICON
 // ==================================================
@@ -96,6 +98,129 @@ const PhoneIcon = ({ number }) => {
 
 
 
+
+
+// ==================================================
+// WHATSAPP ICON
+// ==================================================
+
+const WhatsAppIcon = ({ number }) => {
+
+  if (!number) {
+    return null
+  }
+
+  const normalizeWhatsAppNumber = (value) => {
+
+    const digits =
+      String(value || '').replace(/\D/g, '')
+
+    if (!digits) {
+      return ''
+    }
+
+    if (digits.length === 10) {
+      return `91${digits}`
+    }
+
+    if (
+      digits.length === 11 &&
+      digits.startsWith('0')
+    ) {
+      return `91${digits.slice(1)}`
+    }
+
+    return digits
+  }
+
+  const openWhatsApp = () => {
+
+    const phone =
+      normalizeWhatsAppNumber(number)
+
+    if (!phone) {
+      return
+    }
+
+    if (
+      Capacitor.getPlatform() === 'android'
+    ) {
+
+      window.location.href =
+        `whatsapp://send?phone=${phone}`
+
+    } else {
+
+      window.open(
+        `https://wa.me/${phone}`,
+        '_blank'
+      )
+
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      className="whatsapp-icon-button"
+      onClick={openWhatsApp}
+      aria-label={`Open WhatsApp for ${number}`}
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20.52 3.48A11.85 11.85 0 0 0 12.07 0
+          C5.5 0 .15 5.35.15 11.93
+          C.15 14.03.7 16.08 1.74 17.88
+          L.05 24l6.26-1.64
+          a11.9 11.9 0 0 0 5.76 1.47h.01
+          c6.58 0 11.93-5.35 11.93-11.93
+          0-3.19-1.24-6.18-3.49-8.42ZM12.08 21.8
+          a9.85 9.85 0 0 1-5.03-1.38l-.36-.21
+          -3.72.98.99-3.62-.23-.37
+          a9.86 9.86 0 0 1-1.51-5.27
+          c0-5.45 4.44-9.88 9.89-9.88
+          2.64 0 5.12 1.03 6.99 2.9
+          a9.82 9.82 0 0 1 2.89 6.99
+          c0 5.45-4.44 9.88-9.91 9.88Zm5.42-7.4
+          c-.3-.15-1.78-.88-2.06-.98
+          -.28-.1-.48-.15-.68.15
+          -.2.3-.78.98-.95 1.18
+          -.17.2-.35.22-.65.07
+          -.3-.15-1.25-.46-2.38-1.47
+          -.88-.78-1.47-1.74-1.64-2.04
+          -.17-.3-.02-.46.13-.61
+          .13-.13.3-.35.45-.52
+          .15-.17.2-.3.3-.5
+          .1-.2.05-.37-.02-.52
+          -.07-.15-.68-1.64-.93-2.24
+          -.25-.59-.5-.51-.68-.52
+          -.17-.01-.37-.01-.57-.01
+          -.2 0-.52.07-.8.37
+          -.28.3-1.05 1.03-1.05 2.51
+          0 1.48 1.08 2.91 1.23 3.11
+          .15.2 2.13 3.25 5.16 4.56
+          .72.31 1.28.5 1.72.64
+          .72.23 1.38.2 1.9.12
+          .58-.09 1.78-.73 2.03-1.43
+          .25-.7.25-1.3.17-1.43
+          -.07-.12-.27-.2-.57-.35Z"
+          fill="currentColor"
+        />
+      </svg>
+    </button>
+  )
+}
+
+
+
+
+
 // ==================================================
 // MONTHLY RENT VIEW MODAL
 // ==================================================
@@ -113,6 +238,14 @@ const MonthlyRentViewModal = ({
 
   const [selectedStudent, setSelectedStudent] =
     useState(null)
+
+  const [showShareStudentPopup, setShowShareStudentPopup] =
+    useState(false)
+
+  const [shareError, setShareError] =
+    useState('')
+
+
 
 
 
@@ -154,50 +287,31 @@ const MonthlyRentViewModal = ({
 
 
 
+
+
   // ==================================================
-  // SHARE RENT DETAILS
+  // FORMAT AMOUNT
   // ==================================================
 
-  const handleShareRentDetails = () => {
-
-    // ----------------------------------------------
-    // FORMAT AMOUNT
-    // ----------------------------------------------
-
-    const formatAmount = (amount) =>
-      Number(amount ?? 0).toLocaleString('en-IN')
+  const formatAmount = (amount) =>
+    Number(
+      amount ?? 0
+    ).toLocaleString(
+      'en-IN'
+    )
 
 
 
-    // ----------------------------------------------
-    // CHECK METER READINGS
-    // ----------------------------------------------
-
-    const hasMeterReading =
-      rent.lastReading !== null &&
-      rent.lastReading !== undefined &&
-      rent.currentReading !== null &&
-      rent.currentReading !== undefined
 
 
+  // ==================================================
+  // CREATE RENT SHARE MESSAGE
+  // ==================================================
 
-    // ----------------------------------------------
-    // CALCULATE UNITS
-    // ----------------------------------------------
+  const createRentShareMessage = () => {
 
-    const unitsConsumed =
-      hasMeterReading
-        ? Number(rent.currentReading) -
-          Number(rent.lastReading)
-        : null
-
-
-
-    // ----------------------------------------------
-    // RENT DETAILS
-    // ----------------------------------------------
-
-    let rentMessage = `🏠 Hostel Rent Details
+    let message =
+`🏠 Hostel Rent Details
 
 Room No: ${rent.roomNo}
 Month: ${rent.month} ${rent.year}
@@ -208,16 +322,22 @@ Arrear Bill: ₹${formatAmount(rent.arrearBill)}
 Light Bill: ₹${formatAmount(rent.totalLightBill)}
 Total Rent: ₹${formatAmount(rent.totalRent)}`
 
-
-
-    // ----------------------------------------------
-    // METER DETAILS
-    // ----------------------------------------------
+    const hasMeterReading =
+      rent.lastReading !== null &&
+      rent.lastReading !== undefined &&
+      rent.lastReading !== '' &&
+      rent.currentReading !== null &&
+      rent.currentReading !== undefined &&
+      rent.currentReading !== ''
 
     if (hasMeterReading) {
 
-      rentMessage += `
+      const unitsConsumed =
+        Number(rent.currentReading) -
+        Number(rent.lastReading)
 
+      message +=
+`
 📊 Meter Reading
 Last Reading: ${rent.lastReading}
 Current Reading: ${rent.currentReading}
@@ -225,40 +345,126 @@ Units Consumed: ${unitsConsumed}`
 
     }
 
+    return message
+  }
 
 
-    // ----------------------------------------------
-    // OPEN WHATSAPP
-    // ----------------------------------------------
+
+
+
+  // ==================================================
+  // SHARE RENT DETAILS
+  // ==================================================
+
+  const handleShareRentDetails = () => {
+
+    setShareError('')
+
+    const activeStudents =
+      students.filter(
+        (student) =>
+          Number(student.roomNo) ===
+            Number(rent.roomNo) &&
+          String(
+            student.status || 'ACTIVE'
+          ).toUpperCase() === 'ACTIVE'
+      )
+
+    if (activeStudents.length === 0) {
+
+      setShareError(
+        'No active student found in this room.'
+      )
+
+      setShowShareStudentPopup(true)
+
+      return
+    }
+
+    setShowShareStudentPopup(true)
+  }
+
+
+
+
+
+  // ==================================================
+  // SHARE RENT WITH SELECTED STUDENT
+  // ==================================================
+
+  const shareRentWithStudent = (student) => {
+
+    const rawNumber =
+      String(
+        student.whatsappNo || ''
+      )
+
+    const whatsappNo =
+      rawNumber.replace(
+        /\D/g,
+        ''
+      )
+
+    if (!whatsappNo) {
+
+      setShareError(
+        `${student.studentName} does not have a WhatsApp number.`
+      )
+
+      return
+    }
+
+    let phone = whatsappNo
+
+    if (whatsappNo.length === 10) {
+
+      phone = `91${whatsappNo}`
+
+    } else if (
+      whatsappNo.length === 11 &&
+      whatsappNo.startsWith('0')
+    ) {
+
+      phone =
+        `91${whatsappNo.slice(1)}`
+
+    }
+
+    const message =
+      createRentShareMessage()
 
     const encodedMessage =
-      encodeURIComponent(rentMessage)
+      encodeURIComponent(message)
 
-
+    setShowShareStudentPopup(false)
+    setShareError('')
 
     if (
       Capacitor.getPlatform() === 'android'
     ) {
 
       window.location.href =
-        `whatsapp://send?text=${encodedMessage}`
+        `whatsapp://send?phone=${phone}&text=${encodedMessage}`
 
     } else {
 
       window.open(
-        `https://wa.me/?text=${encodedMessage}`,
+        `https://wa.me/${phone}?text=${encodedMessage}`,
         '_blank'
       )
 
     }
-
   }
+
+
 
 
 
   if (!rent) {
     return null
   }
+
+
 
 
 
@@ -301,6 +507,8 @@ Units Consumed: ${unitsConsumed}`
 
 
 
+
+
           {/* =========================
               TABS
               ========================= */}
@@ -320,8 +528,6 @@ Units Consumed: ${unitsConsumed}`
               Overview
             </button>
 
-
-
             <button
               className={
                 activeTab === 'students'
@@ -335,8 +541,6 @@ Units Consumed: ${unitsConsumed}`
               Students
             </button>
 
-
-
             <button
               className={
                 activeTab === 'rent'
@@ -349,8 +553,6 @@ Units Consumed: ${unitsConsumed}`
             >
               Rent Details
             </button>
-
-
 
             <button
               className={
@@ -369,6 +571,8 @@ Units Consumed: ${unitsConsumed}`
 
 
 
+
+
           {/* ==================================================
               OVERVIEW TAB
               ================================================== */}
@@ -378,8 +582,6 @@ Units Consumed: ${unitsConsumed}`
             <div className="monthly-rent-tab-content">
 
               <div className="monthly-rent-overview-grid">
-
-                {/* Month */}
 
                 <div className="monthly-rent-overview-card">
 
@@ -393,10 +595,6 @@ Units Consumed: ${unitsConsumed}`
 
                 </div>
 
-
-
-                {/* Light Bill */}
-
                 <div className="monthly-rent-overview-card">
 
                   <label>
@@ -408,10 +606,6 @@ Units Consumed: ${unitsConsumed}`
                   </p>
 
                 </div>
-
-
-
-                {/* Monthly Rent */}
 
                 <div className="monthly-rent-overview-card">
 
@@ -425,10 +619,6 @@ Units Consumed: ${unitsConsumed}`
 
                 </div>
 
-
-
-                {/* Total Rent */}
-
                 <div className="monthly-rent-overview-card">
 
                   <label>
@@ -441,10 +631,6 @@ Units Consumed: ${unitsConsumed}`
 
                 </div>
 
-
-
-                {/* Total Rent Paid */}
-
                 <div className="monthly-rent-overview-card">
 
                   <label>
@@ -456,10 +642,6 @@ Units Consumed: ${unitsConsumed}`
                   </p>
 
                 </div>
-
-
-
-                {/* Payment Status */}
 
                 <div className="monthly-rent-info-row">
 
@@ -501,6 +683,8 @@ Units Consumed: ${unitsConsumed}`
 
 
 
+
+
           {/* ==================================================
               STUDENTS TAB
               ================================================== */}
@@ -512,8 +696,6 @@ Units Consumed: ${unitsConsumed}`
               <h3>
                 Students
               </h3>
-
-
 
               {students.length > 0 ? (
 
@@ -553,6 +735,8 @@ Units Consumed: ${unitsConsumed}`
 
 
 
+
+
           {/* ==================================================
               RENT DETAILS TAB
               ================================================== */}
@@ -564,8 +748,6 @@ Units Consumed: ${unitsConsumed}`
               <h3>
                 Rent Details
               </h3>
-
-
 
               <div className="monthly-rent-info-list">
 
@@ -581,8 +763,6 @@ Units Consumed: ${unitsConsumed}`
 
                 </div>
 
-
-
                 <div className="monthly-rent-info-row">
 
                   <label>
@@ -594,8 +774,6 @@ Units Consumed: ${unitsConsumed}`
                   </p>
 
                 </div>
-
-
 
                 <div className="monthly-rent-info-row">
 
@@ -609,8 +787,6 @@ Units Consumed: ${unitsConsumed}`
 
                 </div>
 
-
-
                 <div className="monthly-rent-info-row">
 
                   <label>
@@ -623,8 +799,6 @@ Units Consumed: ${unitsConsumed}`
 
                 </div>
 
-
-
                 <div className="monthly-rent-info-row">
 
                   <label>
@@ -636,8 +810,6 @@ Units Consumed: ${unitsConsumed}`
                   </p>
 
                 </div>
-
-
 
                 <div className="monthly-rent-info-row">
 
@@ -659,6 +831,8 @@ Units Consumed: ${unitsConsumed}`
 
 
 
+
+
           {/* ==================================================
               METER READING TAB
               ================================================== */}
@@ -670,8 +844,6 @@ Units Consumed: ${unitsConsumed}`
               <h3>
                 Meter Reading
               </h3>
-
-
 
               <div className="monthly-rent-info-list">
 
@@ -687,8 +859,6 @@ Units Consumed: ${unitsConsumed}`
 
                 </div>
 
-
-
                 <div className="monthly-rent-info-row">
 
                   <label>
@@ -700,8 +870,6 @@ Units Consumed: ${unitsConsumed}`
                   </p>
 
                 </div>
-
-
 
                 <div className="monthly-rent-info-row">
 
@@ -717,8 +885,6 @@ Units Consumed: ${unitsConsumed}`
                   </p>
 
                 </div>
-
-
 
                 <div className="monthly-rent-info-row">
 
@@ -740,6 +906,8 @@ Units Consumed: ${unitsConsumed}`
 
 
 
+
+
           {/* ==================================================
               MODAL BUTTONS
               ================================================== */}
@@ -752,8 +920,6 @@ Units Consumed: ${unitsConsumed}`
             >
               Share Rent Details
             </button>
-
-
 
             <button
               className="cancel-btn"
@@ -770,6 +936,8 @@ Units Consumed: ${unitsConsumed}`
 
 
 
+
+
       {/* ==================================================
           STUDENT DETAILS POPUP
           ================================================== */}
@@ -779,10 +947,6 @@ Units Consumed: ${unitsConsumed}`
         <div className="monthly-rent-modal-overlay">
 
           <div className="monthly-rent-modal student-popup">
-
-            {/* =========================
-                HEADER
-                ========================= */}
 
             <div className="monthly-rent-modal-header">
 
@@ -803,13 +967,9 @@ Units Consumed: ${unitsConsumed}`
 
 
 
-            {/* =========================
-                STUDENT DETAILS
-                ========================= */}
+
 
             <div className="student-details-popup">
-
-              {/* Student ID */}
 
               <div className="student-detail-item">
 
@@ -823,10 +983,6 @@ Units Consumed: ${unitsConsumed}`
 
               </div>
 
-
-
-              {/* Student Name */}
-
               <div className="student-detail-item">
 
                 <label>
@@ -838,10 +994,6 @@ Units Consumed: ${unitsConsumed}`
                 </p>
 
               </div>
-
-
-
-              {/* Contact No. */}
 
               <div className="student-detail-item">
 
@@ -865,9 +1017,28 @@ Units Consumed: ${unitsConsumed}`
 
               </div>
 
+              <div className="student-detail-item">
 
+                <label>
+                  WhatsApp No.
+                </label>
 
-              {/* Father Name */}
+                <div className="student-phone-row">
+
+                  <p>
+                    {selectedStudent.whatsappNo ||
+                      'Not Available'}
+                  </p>
+
+                  <WhatsAppIcon
+                    number={
+                      selectedStudent.whatsappNo
+                    }
+                  />
+
+                </div>
+
+              </div>
 
               <div className="student-detail-item">
 
@@ -880,10 +1051,6 @@ Units Consumed: ${unitsConsumed}`
                 </p>
 
               </div>
-
-
-
-              {/* Father Contact No. */}
 
               <div className="student-detail-item">
 
@@ -911,9 +1078,7 @@ Units Consumed: ${unitsConsumed}`
 
 
 
-            {/* =========================
-                CLOSE
-                ========================= */}
+
 
             <div className="monthly-rent-modal-buttons">
 
@@ -934,9 +1099,160 @@ Units Consumed: ${unitsConsumed}`
 
       )}
 
+
+
+
+
+      {/* ==================================================
+          SHARE RENT - SELECT STUDENT POPUP
+          ================================================== */}
+
+      {showShareStudentPopup && (
+
+        <div className="monthly-rent-modal-overlay">
+
+          <div className="monthly-rent-modal student-popup">
+
+            <div className="monthly-rent-modal-header">
+
+              <div>
+
+                <h2>
+                  Select Student
+                </h2>
+
+                <p className="monthly-rent-modal-subtitle">
+                  Select the student whose WhatsApp
+                  should receive the rent details.
+                </p>
+
+              </div>
+
+              <button
+                className="close-btn"
+                onClick={() => {
+                  setShowShareStudentPopup(false)
+                  setShareError('')
+                }}
+              >
+                ×
+              </button>
+
+            </div>
+
+
+
+
+
+            {shareError && (
+
+              <p
+                style={{
+                  color: 'red',
+                  margin: '15px 0'
+                }}
+              >
+                {shareError}
+              </p>
+
+            )}
+
+
+
+
+
+            <div className="monthly-rent-tab-content">
+
+              {students
+                .filter(
+                  (student) =>
+                    Number(student.roomNo) ===
+                      Number(rent.roomNo) &&
+                    String(
+                      student.status || 'ACTIVE'
+                    ).toUpperCase() === 'ACTIVE'
+                )
+                .map(
+                  (student) => (
+
+                    <button
+                      key={student.studentId}
+                      className="student-name-btn"
+                      style={{
+                        width: '100%',
+                        marginBottom: '10px',
+                        textAlign: 'left'
+                      }}
+                      onClick={() =>
+                        shareRentWithStudent(
+                          student
+                        )
+                      }
+                    >
+
+                      <strong>
+                        {student.studentName}
+                      </strong>
+
+                      <br />
+
+                      <small>
+                        WhatsApp:{' '}
+                        {student.whatsappNo ||
+                          'Not Available'}
+                      </small>
+
+                    </button>
+
+                  )
+                )}
+
+              {students.filter(
+                (student) =>
+                  Number(student.roomNo) ===
+                    Number(rent.roomNo) &&
+                  String(
+                    student.status || 'ACTIVE'
+                  ).toUpperCase() === 'ACTIVE'
+              ).length === 0 && (
+
+                <p>
+                  No active student found in this room.
+                </p>
+
+              )}
+
+            </div>
+
+
+
+
+
+            <div className="monthly-rent-modal-buttons">
+
+              <button
+                className="cancel-btn"
+                onClick={() => {
+                  setShowShareStudentPopup(false)
+                  setShareError('')
+                }}
+              >
+                Cancel
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
+
     </>
   )
 }
+
+
 
 
 
