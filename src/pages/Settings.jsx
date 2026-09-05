@@ -149,53 +149,29 @@ const Settings = () => {
       ) {
 
         // ------------------------------------------
-        // Create backup directory if required
-        // ------------------------------------------
-
-        try {
-
-          await Filesystem.stat({
-
-            path: 'hms',
-
-            directory:
-              Directory.Documents
-
-          })
-
-        } catch {
-
-          await Filesystem.mkdir({
-
-            path: 'hms',
-
-            directory:
-              Directory.Documents
-
-          })
-
-        }
-
-
-        // ------------------------------------------
-        // Backup file
+        // Save automatic backup inside app data
         // ------------------------------------------
 
         await Filesystem.writeFile({
 
           path:
-            'hms/HMS_Backup.json',
+            'HMS_Backup.json',
 
           data:
             jsonString,
 
           directory:
-            Directory.Documents,
+            Directory.Data,
 
           encoding:
             'utf8'
 
         })
+
+
+        console.log(
+          'SETTINGS: Backup saved to app data.'
+        )
 
 
         setMessage(
@@ -473,14 +449,18 @@ const Settings = () => {
         Capacitor.isNativePlatform()
       ) {
 
+        // ------------------------------------------
+        // Read automatic backup from app data
+        // ------------------------------------------
+
         const backupFile =
           await Filesystem.readFile({
 
             path:
-              'hms/HMS_Backup.json',
+              'HMS_Backup.json',
 
             directory:
-              Directory.Documents,
+              Directory.Data,
 
             encoding:
               'utf8'
@@ -488,11 +468,19 @@ const Settings = () => {
           })
 
 
+        // ------------------------------------------
+        // Parse backup
+        // ------------------------------------------
+
         const backupData =
           JSON.parse(
             backupFile.data
           )
 
+
+        // ------------------------------------------
+        // Confirm restore
+        // ------------------------------------------
 
         const confirmed =
           window.confirm(
@@ -512,6 +500,10 @@ const Settings = () => {
           'SETTINGS: Restoring automatic backup...'
         )
 
+
+        // ------------------------------------------
+        // Restore database
+        // ------------------------------------------
 
         await importDatabase(
           backupData
@@ -1551,6 +1543,7 @@ const Settings = () => {
                   detectedQrData.name ||
                   'Enter name (optional)'
                 }
+
               />
 
             </div>
@@ -1579,6 +1572,7 @@ const Settings = () => {
                   detectedQrData.upiId ||
                   'Enter UPI ID (optional)'
                 }
+
               />
 
             </div>
@@ -1607,6 +1601,7 @@ const Settings = () => {
                   detectedQrData.note ||
                   'Enter payment note (optional)'
                 }
+
               />
 
             </div>
