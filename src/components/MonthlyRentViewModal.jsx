@@ -4,6 +4,7 @@ import { Capacitor } from '@capacitor/core'
 import { getStudents } from '../services/studentService'
 
 
+
 // ==================================================
 // PHONE ICON
 // ==================================================
@@ -94,6 +95,7 @@ const PhoneIcon = ({ number }) => {
 }
 
 
+
 // ==================================================
 // MONTHLY RENT VIEW MODAL
 // ==================================================
@@ -111,6 +113,7 @@ const MonthlyRentViewModal = ({
 
   const [selectedStudent, setSelectedStudent] =
     useState(null)
+
 
 
   // ==================================================
@@ -150,9 +153,113 @@ const MonthlyRentViewModal = ({
   }, [rent])
 
 
+
+  // ==================================================
+  // SHARE RENT DETAILS
+  // ==================================================
+
+  const handleShareRentDetails = () => {
+
+    // ----------------------------------------------
+    // FORMAT AMOUNT
+    // ----------------------------------------------
+
+    const formatAmount = (amount) =>
+      Number(amount ?? 0).toLocaleString('en-IN')
+
+
+
+    // ----------------------------------------------
+    // CHECK METER READINGS
+    // ----------------------------------------------
+
+    const hasMeterReading =
+      rent.lastReading !== null &&
+      rent.lastReading !== undefined &&
+      rent.currentReading !== null &&
+      rent.currentReading !== undefined
+
+
+
+    // ----------------------------------------------
+    // CALCULATE UNITS
+    // ----------------------------------------------
+
+    const unitsConsumed =
+      hasMeterReading
+        ? Number(rent.currentReading) -
+          Number(rent.lastReading)
+        : null
+
+
+
+    // ----------------------------------------------
+    // RENT DETAILS
+    // ----------------------------------------------
+
+    let rentMessage = `🏠 Hostel Rent Details
+
+Room No: ${rent.roomNo}
+Month: ${rent.month} ${rent.year}
+
+💰 Rent Details
+Monthly Rent: ₹${formatAmount(rent.rent)}
+Arrear Bill: ₹${formatAmount(rent.arrearBill)}
+Light Bill: ₹${formatAmount(rent.totalLightBill)}
+Total Rent: ₹${formatAmount(rent.totalRent)}`
+
+
+
+    // ----------------------------------------------
+    // METER DETAILS
+    // ----------------------------------------------
+
+    if (hasMeterReading) {
+
+      rentMessage += `
+
+📊 Meter Reading
+Last Reading: ${rent.lastReading}
+Current Reading: ${rent.currentReading}
+Units Consumed: ${unitsConsumed}`
+
+    }
+
+
+
+    // ----------------------------------------------
+    // OPEN WHATSAPP
+    // ----------------------------------------------
+
+    const encodedMessage =
+      encodeURIComponent(rentMessage)
+
+
+
+    if (
+      Capacitor.getPlatform() === 'android'
+    ) {
+
+      window.location.href =
+        `whatsapp://send?text=${encodedMessage}`
+
+    } else {
+
+      window.open(
+        `https://wa.me/?text=${encodedMessage}`,
+        '_blank'
+      )
+
+    }
+
+  }
+
+
+
   if (!rent) {
     return null
   }
+
 
 
   return (
@@ -193,6 +300,7 @@ const MonthlyRentViewModal = ({
           </div>
 
 
+
           {/* =========================
               TABS
               ========================= */}
@@ -213,6 +321,7 @@ const MonthlyRentViewModal = ({
             </button>
 
 
+
             <button
               className={
                 activeTab === 'students'
@@ -225,6 +334,7 @@ const MonthlyRentViewModal = ({
             >
               Students
             </button>
+
 
 
             <button
@@ -241,6 +351,7 @@ const MonthlyRentViewModal = ({
             </button>
 
 
+
             <button
               className={
                 activeTab === 'meter'
@@ -255,6 +366,7 @@ const MonthlyRentViewModal = ({
             </button>
 
           </div>
+
 
 
           {/* ==================================================
@@ -282,6 +394,7 @@ const MonthlyRentViewModal = ({
                 </div>
 
 
+
                 {/* Light Bill */}
 
                 <div className="monthly-rent-overview-card">
@@ -295,6 +408,7 @@ const MonthlyRentViewModal = ({
                   </p>
 
                 </div>
+
 
 
                 {/* Monthly Rent */}
@@ -312,6 +426,7 @@ const MonthlyRentViewModal = ({
                 </div>
 
 
+
                 {/* Total Rent */}
 
                 <div className="monthly-rent-overview-card">
@@ -327,6 +442,7 @@ const MonthlyRentViewModal = ({
                 </div>
 
 
+
                 {/* Total Rent Paid */}
 
                 <div className="monthly-rent-overview-card">
@@ -340,6 +456,7 @@ const MonthlyRentViewModal = ({
                   </p>
 
                 </div>
+
 
 
                 {/* Payment Status */}
@@ -383,6 +500,7 @@ const MonthlyRentViewModal = ({
           )}
 
 
+
           {/* ==================================================
               STUDENTS TAB
               ================================================== */}
@@ -394,6 +512,7 @@ const MonthlyRentViewModal = ({
               <h3>
                 Students
               </h3>
+
 
 
               {students.length > 0 ? (
@@ -433,6 +552,7 @@ const MonthlyRentViewModal = ({
           )}
 
 
+
           {/* ==================================================
               RENT DETAILS TAB
               ================================================== */}
@@ -444,6 +564,7 @@ const MonthlyRentViewModal = ({
               <h3>
                 Rent Details
               </h3>
+
 
 
               <div className="monthly-rent-info-list">
@@ -461,6 +582,7 @@ const MonthlyRentViewModal = ({
                 </div>
 
 
+
                 <div className="monthly-rent-info-row">
 
                   <label>
@@ -472,6 +594,7 @@ const MonthlyRentViewModal = ({
                   </p>
 
                 </div>
+
 
 
                 <div className="monthly-rent-info-row">
@@ -487,6 +610,7 @@ const MonthlyRentViewModal = ({
                 </div>
 
 
+
                 <div className="monthly-rent-info-row">
 
                   <label>
@@ -500,6 +624,7 @@ const MonthlyRentViewModal = ({
                 </div>
 
 
+
                 <div className="monthly-rent-info-row">
 
                   <label>
@@ -511,6 +636,7 @@ const MonthlyRentViewModal = ({
                   </p>
 
                 </div>
+
 
 
                 <div className="monthly-rent-info-row">
@@ -532,6 +658,7 @@ const MonthlyRentViewModal = ({
           )}
 
 
+
           {/* ==================================================
               METER READING TAB
               ================================================== */}
@@ -543,6 +670,7 @@ const MonthlyRentViewModal = ({
               <h3>
                 Meter Reading
               </h3>
+
 
 
               <div className="monthly-rent-info-list">
@@ -560,6 +688,7 @@ const MonthlyRentViewModal = ({
                 </div>
 
 
+
                 <div className="monthly-rent-info-row">
 
                   <label>
@@ -571,6 +700,7 @@ const MonthlyRentViewModal = ({
                   </p>
 
                 </div>
+
 
 
                 <div className="monthly-rent-info-row">
@@ -587,6 +717,7 @@ const MonthlyRentViewModal = ({
                   </p>
 
                 </div>
+
 
 
                 <div className="monthly-rent-info-row">
@@ -608,11 +739,21 @@ const MonthlyRentViewModal = ({
           )}
 
 
+
           {/* ==================================================
-              CLOSE BUTTON
+              MODAL BUTTONS
               ================================================== */}
 
           <div className="monthly-rent-modal-buttons">
+
+            <button
+              className="share-rent-btn"
+              onClick={handleShareRentDetails}
+            >
+              Share Rent Details
+            </button>
+
+
 
             <button
               className="cancel-btn"
@@ -626,6 +767,7 @@ const MonthlyRentViewModal = ({
         </div>
 
       </div>
+
 
 
       {/* ==================================================
@@ -660,6 +802,7 @@ const MonthlyRentViewModal = ({
             </div>
 
 
+
             {/* =========================
                 STUDENT DETAILS
                 ========================= */}
@@ -681,6 +824,7 @@ const MonthlyRentViewModal = ({
               </div>
 
 
+
               {/* Student Name */}
 
               <div className="student-detail-item">
@@ -696,27 +840,31 @@ const MonthlyRentViewModal = ({
               </div>
 
 
+
               {/* Contact No. */}
 
               <div className="student-detail-item">
 
-             <label>
-              Contact No.
-             </label>
+                <label>
+                  Contact No.
+                </label>
 
-            <div className="student-phone-row">
+                <div className="student-phone-row">
 
-            <p>
-            {selectedStudent.contactNo}
-            </p>
+                  <p>
+                    {selectedStudent.contactNo}
+                  </p>
 
-            <PhoneIcon
-            number={selectedStudent.contactNo}
-            />
+                  <PhoneIcon
+                    number={
+                      selectedStudent.contactNo
+                    }
+                  />
 
-        </div>
+                </div>
 
-        </div>
+              </div>
+
 
 
               {/* Father Name */}
@@ -734,29 +882,33 @@ const MonthlyRentViewModal = ({
               </div>
 
 
+
               {/* Father Contact No. */}
 
               <div className="student-detail-item">
 
-  <label>
-    Father Contact No.
-  </label>
+                <label>
+                  Father Contact No.
+                </label>
 
-  <div className="student-phone-row">
+                <div className="student-phone-row">
 
-    <p>
-      {selectedStudent.fatherContact}
-    </p>
+                  <p>
+                    {selectedStudent.fatherContact}
+                  </p>
 
-    <PhoneIcon
-      number={selectedStudent.fatherContact}
-    />
+                  <PhoneIcon
+                    number={
+                      selectedStudent.fatherContact
+                    }
+                  />
 
-  </div>
+                </div>
 
-</div>
+              </div>
 
             </div>
+
 
 
             {/* =========================
@@ -785,6 +937,7 @@ const MonthlyRentViewModal = ({
     </>
   )
 }
+
 
 
 export default MonthlyRentViewModal

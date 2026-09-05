@@ -2804,6 +2804,21 @@ body {
   border-top: 1px solid #e5e5e5;
 }
 
+.share-rent-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #801bd8;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.share-rent-btn:hover {
+  opacity: 0.9;
+}
+
 
 /* ==================================================
    EDIT PAYMENT STATUS
